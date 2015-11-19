@@ -1,0 +1,25 @@
+.TH lmdb n 4.1 "Tcl-Extensions"
+.HS lmdb tcl
+.BS
+.SH NAME
+lmdb \- an interface to the Lightning Memory-Mapped Database (LMDB)
+.SH SYNOPSIS
+\fBlmdb\fI version\fR 
+.br
+\fBlmdb\fI env\fR 
+.br
+\fBlmdb\fI open\fR
+.br
+.SH DESCRIPTION
+LMDB is a Btree-based database management library with an API similar
+to BerkeleyDB. The library is thread-aware and supports concurrent
+read/write access from multiple processes and threads. The DB
+structure is multi-versioned, and data pages use a copy-on-write
+strategy, which also provides resistance to corruption and eliminates
+the need for any recovery procedures. The database is exposed in a
+memory map, requiring no page cache layer of its own.
+
+This extension provides an easy to use interface for accessing LMDB 
+database files from Tcl. 
+.PP
+For full documentation see \fIhttp://symas.com/mdb/\fR.

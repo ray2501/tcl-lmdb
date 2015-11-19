@@ -1,0 +1,64 @@
+2015-11-13  Danilo Chang  <ray2501@gmail.com>
+
+    * Set version to v0.2.3
+    * generic/tclmdb.c: env_handle open command add option
+      -fixedmap
+    * generic/tclmdb.c: Add a thread exit handler to delete
+      hash table.
+    * generic/tclmdb.c: Try to use ThreadSpecificData to
+      per thread hash table.
+    * generic/mdb.c: Update source code.
+      LMDB 0.9.16 with extra fixes from github.
+
+2015-11-08  Danilo Chang  <ray2501@gmail.com>
+
+    * Set version to v0.2.2
+    * generic/tclmdb.c: Fix cursor_handle renew issue.
+    * generic/tclmdb.c: Implement dbi_handle del command
+      behavior.
+
+2015-11-07  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/tclmdb.c: Add more check in env_handle copy  
+      command. Fix --with-system-lmdb option issue.
+    * Set version to v0.2.1
+    * generic/tclmdb.c: Implement cursor_handle get command
+      option: -set_range -get_both_range
+    * generic/mdb.c: Update source code.
+      LMDB 0.9.16 with extra fixes from github.
+
+2015-11-06  Danilo Chang  <ray2501@gmail.com>
+
+    * configure.ac: add --with-system-lmdb option,
+      causes the TCL bindings to LMDB to use the system
+      shared library for LMDB. Default setting is no.
+    * generic/tclmdb.c: Add LMDB version check in
+      env_handle copy command. Using mdb_env_copy2
+      function need >= version 0.9.14.
+
+2015-11-05  Danilo Chang  <ray2501@gmail.com>
+
+    * Set version to v0.2
+    * generic/tclmdb.c: Update source code   
+    * generic/mdb.c: Update source code
+    * generic/tclmdb.c: Implement dbi_handle stat command    
+    * generic/tclmdb.c: lmdb open command add option:
+      -reversekey and -reversedup
+    * Makefile.in: add workaround for glibc pthread
+      robust mutex support fix (for Linux glibc < 2.12)
+
+2015-11-04  Danilo Chang  <ray2501@gmail.com>
+
+    * Set version to v0.1.1
+    * Implement cursor_handle count command
+
+2015-11-03  Danilo Chang  <ray2501@gmail.com>
+
+    * Implement lmdb env and lmdb open command
+
+2015-11-02  Danilo Chang  <ray2501@gmail.com>
+
+    * Implement lmdb version command
+    * Copy LICENSE and COPYRIGHT file to root folder
+    * Copy lmdb.h, mdb.c, midl.c and midl.h to generic folder
+
