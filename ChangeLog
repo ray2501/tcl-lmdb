@@ -1,3 +1,8 @@
+2015-11-24  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+      LMDB 0.9.16 with extra fixes from github.
+
 2015-11-13  Danilo Chang  <ray2501@gmail.com>
 
     * Set version to v0.2.3
