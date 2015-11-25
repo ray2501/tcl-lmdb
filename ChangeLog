@@ -1,3 +1,8 @@
+2015-11-25  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/tclmdb.c: env_handle open command add option
+      -nosubdir
+
 2015-11-24  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update source code.

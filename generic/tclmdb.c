@@ -1128,7 +1128,7 @@ static int LMDB_TXN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
   MDB_txn *txn;
   Tcl_HashEntry *hashEntryPtr;
   char *txnHandle;
-  
+
   ThreadSpecificData *tsdPtr = (ThreadSpecificData *)
       Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
 
@@ -1136,7 +1136,7 @@ static int LMDB_TXN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     tsdPtr->initialized = 1;
     tsdPtr->lmdb_hashtblPtr = (Tcl_HashTable *) ckalloc(sizeof(Tcl_HashTable));
     Tcl_InitHashTable(tsdPtr->lmdb_hashtblPtr, TCL_STRING_KEYS);
-  }  
+  }
 
   static const char *DBTXN_strs[] = {
     "abort",
@@ -1277,7 +1277,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
   MDB_env *env;
   Tcl_HashEntry *hashEntryPtr;
   char *handle;
-  
+
   ThreadSpecificData *tsdPtr = (ThreadSpecificData *)
       Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
 
@@ -1285,7 +1285,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     tsdPtr->initialized = 1;
     tsdPtr->lmdb_hashtblPtr = (Tcl_HashTable *) ckalloc(sizeof(Tcl_HashTable));
     Tcl_InitHashTable(tsdPtr->lmdb_hashtblPtr, TCL_STRING_KEYS);
-  }  
+  }
 
   static const char *DBENV_strs[] = {
     "open",
@@ -1356,7 +1356,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
       if( objc < 4){
         Tcl_WrongNumArgs(interp, 1, objv,
-        "ENV_HANDLE -path path ?-mode mode? ?-fixedmap BOOLEAN? ?-readonly BOOLEAN? ?-nosync BOOLEAN? ?-nordahead BOOLEAN? "
+        "ENV_HANDLE -path path ?-mode mode? ?-fixedmap BOOLEAN? ?-nosubdir BOOLEAN? ?-readonly BOOLEAN? ?-nosync BOOLEAN? ?-nordahead BOOLEAN? "
         );
 
         return TCL_ERROR;
@@ -1375,7 +1375,15 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
               flags |= MDB_FIXEDMAP;
             }else{
               flags &= ~MDB_FIXEDMAP;
-            }            
+            }
+        } else if( strcmp(zArg, "-nosubdir")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_NOSUBDIR;
+            }else{
+              flags &= ~MDB_NOSUBDIR;
+            }
         } else if( strcmp(zArg, "-readonly")==0 ){
             int b;
             if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
@@ -1815,7 +1823,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
   int choice;
   int result;
-  
+
   ThreadSpecificData *tsdPtr = (ThreadSpecificData *)
       Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
 
@@ -2113,11 +2121,11 @@ EXTERN int Lmdb_Init(Tcl_Interp *interp)
 
     //Tcllmdb_InitHashTable();
 
-    /* 
-     *   Tcl_GetThreadData handles the auto-initialization of all data in 
+    /*
+     *   Tcl_GetThreadData handles the auto-initialization of all data in
      *  the ThreadSpecificData to NULL at first time.
      */
-    Tcl_MutexLock(&myMutex);    
+    Tcl_MutexLock(&myMutex);
     ThreadSpecificData *tsdPtr = (ThreadSpecificData *)
         Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
 
@@ -2125,14 +2133,14 @@ EXTERN int Lmdb_Init(Tcl_Interp *interp)
         tsdPtr->initialized = 1;
         tsdPtr->lmdb_hashtblPtr = (Tcl_HashTable *) ckalloc(sizeof(Tcl_HashTable));
         Tcl_InitHashTable(tsdPtr->lmdb_hashtblPtr, TCL_STRING_KEYS);
-          
+
         tsdPtr->env_count = 0;
         tsdPtr->txn_count = 0;
         tsdPtr->dbi_count = 0;
         tsdPtr->cur_count = 0;
     }
     Tcl_MutexUnlock(&myMutex);
-    
+
     /* Add a thread exit handler to delete hash table */
     Tcl_CreateThreadExitHandler(LMDB_Thread_Exit, (ClientData)NULL);
 
