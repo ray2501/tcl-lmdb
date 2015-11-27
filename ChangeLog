@@ -1,3 +1,9 @@
+2015-11-27  Danilo Chang  <ray2501@gmail.com>
+
+    * Set version to v0.2.4
+    * generic/mdb.c: Update source code.
+      LMDB 0.9.16 with extra fixes from github.
+
 2015-11-25  Danilo Chang  <ray2501@gmail.com>
 
     * generic/tclmdb.c: env_handle open command add option
