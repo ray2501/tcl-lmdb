@@ -115,6 +115,7 @@ if test "${TEA_PLATFORM}" = "windows" ; then
     # Ensure no empty if clauses
     :
     TEA_ADD_CFLAGS([-D_WIN32_WINNT=0x0501])
+    TEA_ADD_LIBS([-lntdll])
     #TEA_ADD_SOURCES([win/winFile.c])
     #TEA_ADD_INCLUDES([-I\"$(${CYGPATH} ${srcdir}/win)\"])
 else

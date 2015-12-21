@@ -1,3 +1,16 @@
+2015-12-21  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+      Update to LMDB 0.9.70
+    * generic/mdb.h: Update source code.
+    * generic/midl.c: Update source code.
+    * generic/midl.h: Update source code.
+    * generic/mdb.c: Add a temp solution to fix build
+      fail at MinGW (NTSTATUS not define)
+    * configure.ac: Windows needs to link ntdll.
+      Update for ITS#8324 incremental DB file growth
+      for Windows solution.
+
 2015-11-27  Danilo Chang  <ray2501@gmail.com>
 
     * Set version to v0.2.4
