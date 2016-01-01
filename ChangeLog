@@ -1,8 +1,12 @@
+2016-01-01  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+
 2015-12-21  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update source code.
       Update to LMDB 0.9.70
-    * generic/mdb.h: Update source code.
+    * generic/lmdb.h: Update source code.
     * generic/midl.c: Update source code.
     * generic/midl.h: Update source code.
     * generic/mdb.c: Add a temp solution to fix build
