@@ -1,5 +1,7 @@
 2016-01-12  Danilo Chang  <ray2501@gmail.com>
 
+    * Set version to v0.3
+    * README: Update README.
     * generic/mdb.c: Update source code.
     * generic/lmdb.h: Update source code.
 
