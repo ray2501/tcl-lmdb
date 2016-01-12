@@ -58,7 +58,7 @@
 #if !defined (_NTDEF_) && !defined (_NTDEF_H)
 typedef LONG NTSTATUS;
 #endif
- 
+
 NTSTATUS WINAPI
 NtCreateSection(OUT PHANDLE sh, IN ACCESS_MASK acc,
   IN void * oa OPTIONAL,
@@ -5264,14 +5264,16 @@ mdb_env_close0(MDB_env *env, int excl)
 	free(env->me_dbflags);
 	free(env->me_path);
 	free(env->me_dirty_list);
-	free(env->me_txn0);
 #ifdef MDB_VL32
+	if (env->me_txn0 && env->me_txn->mt_rpages)
+		free(env->me_txn0->mt_rpages);
 	{ unsigned int x;
 		for (x=1; x<=env->me_rpages[0].mid; x++)
 		munmap(env->me_rpages[x].mptr, env->me_rpages[x].mcnt * env->me_psize);
 	}
 	free(env->me_rpages);
 #endif
+	free(env->me_txn0);
 	mdb_midl_free(env->me_free_pgs);
 
 	if (env->me_flags & MDB_ENV_TXKEY) {
@@ -5773,7 +5775,7 @@ notlocal:
 		pthread_mutex_lock(&env->me_rpmutex);
 retry:
 		y = 0;
-		for (i=1; i<tl[0].mid; i++) {
+		for (i=1; i<=tl[0].mid; i++) {
 			if (!tl[i].mref) {
 				if (!y) y = i;
 				/* tmp overflow pages don't go to env */
@@ -5853,7 +5855,7 @@ retry:
 		if (el[0].mid >= MDB_ERPAGE_MAX - env->me_rpcheck) {
 			/* purge unref'd pages */
 			unsigned i, y = 0;
-			for (i=1; i<el[0].mid; i++) {
+			for (i=1; i<=el[0].mid; i++) {
 				if (!el[i].mref) {
 					if (!y) y = i;
 					munmap(el[i].mptr, env->me_psize * el[i].mcnt);
@@ -7001,6 +7003,28 @@ fetchm:
 					mx->mc_db->md_pad;
 				data->mv_data = METADATA(mx->mc_pg[mx->mc_top]);
 				mx->mc_ki[mx->mc_top] = NUMKEYS(mx->mc_pg[mx->mc_top])-1;
+			} else {
+				rc = MDB_NOTFOUND;
+			}
+		}
+		break;
+	case MDB_PREV_MULTIPLE:
+		if (data == NULL) {
+			rc = EINVAL;
+			break;
+		}
+		if (!(mc->mc_db->md_flags & MDB_DUPFIXED)) {
+			rc = MDB_INCOMPATIBLE;
+			break;
+		}
+		if (!(mc->mc_flags & C_INITIALIZED))
+			rc = mdb_cursor_first(mc, key, data);
+		else {
+			MDB_cursor *mx = &mc->mc_xcursor->mx_cursor;
+			if (mx->mc_flags & C_INITIALIZED) {
+				rc = mdb_cursor_sibling(mx, 0);
+				if (rc == MDB_SUCCESS)
+					goto fetchm;
 			} else {
 				rc = MDB_NOTFOUND;
 			}
