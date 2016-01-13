@@ -14,7 +14,7 @@ no page cache layer of its own.
 
 For additional information on LMDB see
 
-    http://symas.com/mdb/
+    [http://symas.com/mdb/] (http://symas.com/mdb/) 
 
 
 License
@@ -49,6 +49,7 @@ If your Linux distribution (ex. Debian, Ubuntu, Fedora, and OpenSuSE)
 includes LMDB, tcl-lmdb support to use the system shared library for LMDB.
 
 Below is an example:
+
     $ ./configure --with-system-lmdb=yes
 
 
