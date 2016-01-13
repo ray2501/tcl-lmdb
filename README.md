@@ -20,7 +20,7 @@ For additional information on LMDB see
 License
 =====
 
-LMDB is Licensed under the OpenLDAP, Public License.
+LMDB is Licensed under the [OpenLDAP, Public License] (http://www.openldap.org/software/release/license.html).  
 tcl-lmdb is Licensed under the 2-Clause BSD license.
 
 
