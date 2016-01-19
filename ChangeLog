@@ -1,3 +1,8 @@
+2016-01-19  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/tclmdb.c: lmdb open command add option:
+      -dupfixed
+
 2016-01-12  Danilo Chang  <ray2501@gmail.com>
 
     * Set version to v0.3

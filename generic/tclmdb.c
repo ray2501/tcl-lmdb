@@ -1914,7 +1914,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
 
       if( objc < 4){
           Tcl_WrongNumArgs(interp, 2, objv,
-          "-env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLEAN? ?-reversedup BOOLEAN? ?-create BOOLEAN? "
+          "-env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLEAN? ?-dupfixed BOOLEAN? ?-reversedup BOOLEAN? ?-create BOOLEAN? "
           );
 
         return TCL_ERROR;
@@ -1948,6 +1948,14 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
               flags |= MDB_DUPSORT;
             }else{
               flags &= ~MDB_DUPSORT;
+            }
+        } else if( strcmp(zArg, "-dupfixed")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_DUPFIXED;
+            }else{
+              flags &= ~MDB_DUPFIXED;
             }
         } else if( strcmp(zArg, "-reversedup")==0 ){
             int b;
