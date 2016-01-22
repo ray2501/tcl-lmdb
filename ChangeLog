@@ -1,3 +1,8 @@
+2016-01-22  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+    * generic/lmdb.h: Update source code.
+
 2016-01-19  Danilo Chang  <ray2501@gmail.com>
 
     * generic/tclmdb.c: lmdb open command add option:
