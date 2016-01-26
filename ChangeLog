@@ -1,5 +1,6 @@
 2016-01-26  Danilo Chang  <ray2501@gmail.com>
 
+    * README.md
     * generic/mdb.c: Update source code.
     * generic/lmdb.h: Update source code.
 

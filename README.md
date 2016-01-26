@@ -24,6 +24,13 @@ LMDB is Licensed under the [OpenLDAP, Public License] (http://www.openldap.org/s
 tcl-lmdb is Licensed under the 2-Clause BSD license.
 
 
+Documents
+=====
+
+* [LMDB Source code] (https://github.com/LMDB/lmdb)
+* [LMDB C API reference] (http://symas.com/mdb/doc/index.html)
+
+
 UNIX BUILD
 =====
 
