@@ -1,3 +1,8 @@
+2016-01-29  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+    * generic/midl.c: Update source code.
+
 2016-01-26  Danilo Chang  <ray2501@gmail.com>
 
     * README.md
