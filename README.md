@@ -148,7 +148,7 @@ error is thrown.
 
 ### Database
 
-lmdb open -env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLEAN? ?-reversedup BOOLEAN? ?-create BOOLEAN?  
+lmdb open -env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLEAN? ?-dupfixed BOOLEAN? ?-reversedup BOOLEAN? ?-create BOOLEAN?  
 dbi_handle put key data -txn txnid ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean?  
 dbi_handle get key -txn txnid  
 dbi_handle del key data -txn txnid  
@@ -159,7 +159,14 @@ dbi_handle close -env env_handle
 The command lmdb open create a database handle. -name database is the name 
 of the database to open option. If only a single database is needed in the 
 environment, skip to setup database name (or you need use env_handle 
-set_maxdbs to set the maximum number of named databases for the environment). 
+set_maxdbs to set the maximum number of named databases for the environment).
+
+-dupsort let duplicate keys may be used in the database. (Or, from another 
+perspective, keys may have multiple data items, stored in sorted order.) 
+By default keys must be unique and may have only a single data item. 
+-dupfixed may only be used in combination with -dupsort, sorted dup items 
+have fixed size.
+
 -create to create the named database if it doesn't exist. This option is not 
 allowed in a read-only transaction or a read-only environment. The returned 
 database handle is bound to a Tcl command of the form dbiN, where N is an 
@@ -471,6 +478,56 @@ Examples
     while { [catch {set data [$mycursor get -nextnodup]} result] == 0} {   
         puts $data
         set number [$mycursor count]       
+        for {set num 0} {$num < $number} {incr num} {
+        if { [catch {set data [$mycursor get -nextdup]} result] == 0 } {
+            puts $data
+        }
+        }
+    }
+
+    $mycursor close
+    $mytxn2 abort
+    $mytxn2 close
+
+    $mydbi close -env $myenv
+    $myenv close
+    exit
+
+### Cursor (dupfixed, for 0.3.1)
+
+    package require lmdb
+
+    set myenv [lmdb env]
+    $myenv set_mapsize 1073741824
+    $myenv set_maxdbs 10
+    file mkdir "fixeddb"
+
+    if {[catch {$myenv open -path "fixeddb"} error] != 0} {
+        puts "open database fail: $error"
+        $myenv close
+        exit
+    }
+
+    set mydbi [lmdb open -env $myenv -name "fixeddb" \
+                         -dupsort 1 -dupfixed 1 -create 1]
+
+    set mytxn [$myenv txn]
+    for {set i 1} {$i < 10} {incr i} {
+    for {set j 1} {$j < 20} {incr j} {
+        set value [format "%07x" $j]
+        $mydbi put $i $value -txn $mytxn
+    }
+    }
+
+    $mytxn commit
+    $mytxn close
+
+    set mytxn2 [$myenv txn -readonly 1]
+    set mycursor [$mydbi cursor -txn $mytxn2]
+
+    while { [catch {set data [$mycursor get -nextnodup]} result] == 0} {
+        puts $data
+        set number [$mycursor count]
         for {set num 0} {$num < $number} {incr num} {
         if { [catch {set data [$mycursor get -nextdup]} result] == 0 } {
             puts $data
