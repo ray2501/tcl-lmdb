@@ -36,7 +36,7 @@
 
 /*
  * Windows needs to know which symbols to export.  Unix does not.
- * BUILD_sqlite should be undefined for Unix.
+ * BUILD_lmdb should be undefined for Unix.
  */
 #ifdef BUILD_lmdb
 #undef TCL_STORAGE_CLASS

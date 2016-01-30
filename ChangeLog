@@ -1,3 +1,12 @@
+2016-01-30  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/lmdb.h: Update source code.
+    * generic/mdb.c: Update source code.
+      Fix MDB_VL32 mdb_cursor_count()/entrycount types
+    * generic/midl.c: Update source code.
+    * generic/midl.h: Update source code.
+    * generic/tclmdb.c: Update source code.
+
 2016-01-29  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update source code.
