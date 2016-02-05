@@ -1,3 +1,8 @@
+2016-02-05  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+      ITS#7992 Fix memleak in prev change (on Windows platform)
+
 2016-01-30  Danilo Chang  <ray2501@gmail.com>
 
     * Setup version to v0.3.1 to test.
