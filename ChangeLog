@@ -1,3 +1,9 @@
+2016-02-16  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update source code.
+      1. Tweak Win32 errmsg buffer
+      2. ITS#8324 Map NTAPI result codes to WIN32 codes
+
 2016-02-05  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update source code.
