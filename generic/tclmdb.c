@@ -165,7 +165,9 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
       if( objc < 3){
         Tcl_WrongNumArgs(interp, 2, objv,
-        "?-set? ?-set_range? ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? ?-next? ?-nextdup? ? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup? ?-get_both? ?-get_both_range? ?key? ?data?");
+        "?-set? ?-set_range? ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? \
+         ?-next? ?-nextdup? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup? \
+         ?-get_multiple? ?-next_multiple? ?-get_both? ?-get_both_range? ?key? ?data?");
         return TCL_ERROR;
       }
 
@@ -198,6 +200,16 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
           op = MDB_PREV_DUP ;
       } else if( strcmp(zArg, "-prevnodup")==0 ){
           op = MDB_PREV_NODUP;
+      } else if( strcmp(zArg, "-get_multiple")==0 ){
+          /*
+           * MDB_GET_MULTIPLE only for MDB_DUPFIXED
+           */
+
+          op = MDB_GET_MULTIPLE;
+          need_key_data = 1;
+      } else if( strcmp(zArg, "-next_multiple")==0 ){
+          op = MDB_NEXT_MULTIPLE;
+          need_key_data = 1;
       } else if( strcmp(zArg, "-get_both")==0 ){
           op = MDB_GET_BOTH;
           need_key_data = 1;
@@ -375,7 +387,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       int flags = 0;
       int i = 0;
 
-      if( objc != 2 && objc != 3){
+      if( objc != 2 && objc != 4){
         Tcl_WrongNumArgs(interp, 2, objv, "?-nodupdata boolean? ");
         return TCL_ERROR;
       }
