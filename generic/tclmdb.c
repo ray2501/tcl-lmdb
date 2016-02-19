@@ -43,14 +43,6 @@
 #define TCL_STORAGE_CLASS DLLEXPORT
 #endif /* BUILD_lmdb */
 
-
-//Tcl_HashTable *tsdPtr->lmdb_hashtblPtr;
-
-//int env_count = 0;
-//int txn_count = 0;
-//int dbi_count = 0;
-//int cur_count = 0;
-
 typedef struct ThreadSpecificData {
   int initialized;                /* initialization flag */
   Tcl_HashTable *lmdb_hashtblPtr; /* per thread hash table. */
@@ -63,18 +55,6 @@ typedef struct ThreadSpecificData {
 static Tcl_ThreadDataKey dataKey;
 
 TCL_DECLARE_MUTEX(myMutex);
-
-/*!
- * This program use a static Hash table to maintain pointer and Tcl handle
- * mapping. Initial our Hash table here
- */
-//void Tcllmdb_InitHashTable()
-//{
-//    Tcl_MutexLock(&myMutex);
-//    lmdb_hashtblPtr = (Tcl_HashTable *) malloc (sizeof(Tcl_HashTable));
-//    Tcl_InitHashTable(lmdb_hashtblPtr, TCL_STRING_KEYS);
-//    Tcl_MutexUnlock(&myMutex);
-//}
 
 
 void LMDB_Thread_Exit(ClientData clientdata)
@@ -297,7 +277,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       int flags = 0;
       int i = 0;
 
-      if( objc < 4){
+      if( objc < 4 || (objc&1)!=0) {
         Tcl_WrongNumArgs(interp, 2, objv, "key data ?-current boolean? ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean? ");
         return TCL_ERROR;
       }
@@ -605,7 +585,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       int flags = 0;
       int i = 0;
 
-      if( objc < 4 ){
+      if( objc < 4 || (objc&1)!=0 ){
         Tcl_WrongNumArgs(interp, 2, objv, "key data -txn txnid ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean? ");
         return TCL_ERROR;
       }
@@ -1366,7 +1346,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
       flags = MDB_FIXEDMAP;
 
-      if( objc < 4){
+      if( objc < 4 || (objc&1)!=0 ){
         Tcl_WrongNumArgs(interp, 1, objv,
         "ENV_HANDLE -path path ?-mode mode? ?-fixedmap BOOLEAN? ?-nosubdir BOOLEAN? ?-readonly BOOLEAN? ?-nosync BOOLEAN? ?-nordahead BOOLEAN? "
         );
@@ -1758,7 +1738,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       int newvalue;
       int i = 0;
 
-      if( objc < 2){
+      if( objc < 2 || (objc&1)!=0 ){
         Tcl_WrongNumArgs(interp, 2, objv, "?-parent txnid? ?-readonly boolean? ");
         return TCL_ERROR;
       }
@@ -1924,7 +1904,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
       int newvalue;
       int i = 0;
 
-      if( objc < 4){
+      if( objc < 4 || (objc&1)!=0 ){
           Tcl_WrongNumArgs(interp, 2, objv,
           "-env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLEAN? ?-dupfixed BOOLEAN? ?-reversedup BOOLEAN? ?-create BOOLEAN? "
           );

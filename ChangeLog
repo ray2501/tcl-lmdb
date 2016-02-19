@@ -1,5 +1,6 @@
 2016-02-19  Danilo Chang  <ray2501@gmail.com>
 
+    * generic/tclmdb.c: Add more check in several commands option
     * generic/mdb.c: Update source code.
     * generic/tclmdb.c: Fix CURSOR del commmand option issue.
       Give the correct option check
