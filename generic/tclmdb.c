@@ -151,7 +151,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      zArg = Tcl_GetString(objv[2]);
+      zArg = Tcl_GetStringFromObj(objv[2], 0);
       if( strcmp(zArg, "-set")==0 ){
           op = MDB_SET;
           need_key = 1;
@@ -293,7 +293,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=4; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
 
         if( strcmp(zArg, "-current")==0 ){
             int b;
@@ -373,7 +373,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
         if( strcmp(zArg, "-nodupdata")==0 ){
             int b;
             if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
@@ -439,7 +439,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      zArg = Tcl_GetString(objv[2]);
+      zArg = Tcl_GetStringFromObj(objv[2], 0);
       if( strcmp(zArg, "-txn")==0 ){
          txnHandle = Tcl_GetStringFromObj(objv[3], 0);
       } else{
@@ -601,7 +601,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=4; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
         if( strcmp(zArg, "-txn")==0 ){
             txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
         } else if( strcmp(zArg, "-nodupdata")==0 ){
@@ -706,7 +706,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=3; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
 
         if( strcmp(zArg, "-txn")==0 ){
             txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
@@ -791,7 +791,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=4; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
         if( strcmp(zArg, "-txn")==0 ){
             txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
         } else{
@@ -875,7 +875,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       Tcl_GetIntFromObj(interp, objv[2], &del_flag);
 
       for(i=3; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
 
         if( strcmp(zArg, "-txn")==0 ){
             txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
@@ -933,7 +933,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
 
         if( strcmp(zArg, "-env")==0 ){
             envHandle = Tcl_GetStringFromObj(objv[i+1], 0);
@@ -980,7 +980,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
         if( strcmp(zArg, "-txn")==0 ){
             txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
         } else{
@@ -1052,7 +1052,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
         if( strcmp(zArg, "-txn")==0 ){
             txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
         } else{
@@ -1355,7 +1355,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
         if( strcmp(zArg, "-path")==0 ){
             path = Tcl_GetStringFromObj(objv[i+1], 0);
         } else if( strcmp(zArg, "-mode")==0 ){
@@ -1744,7 +1744,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
 
         if( strcmp(zArg, "-parent")==0 ){
             parentTxn = Tcl_GetStringFromObj(objv[i+1], &len);
@@ -1913,7 +1913,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
       }
 
       for(i=2; i+1<objc; i+=2){
-        zArg = Tcl_GetString(objv[i]);
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
 
         if( strcmp(zArg, "-name")==0 ){
             database = Tcl_GetStringFromObj(objv[i+1], &len);
