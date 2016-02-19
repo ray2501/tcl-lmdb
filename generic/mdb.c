@@ -1582,7 +1582,7 @@ mdb_strerror(int err)
 	 *	and the actual use of the message uses more than 4K of stack.
 	 */
 #define MSGSIZE	1024
-#define PADSIZE 4096
+#define PADSIZE	4096
 	char buf[MSGSIZE+PADSIZE], *ptr = buf;
 #endif
 	int i;
@@ -7016,8 +7016,10 @@ fetchm:
 			break;
 		}
 		if (!(mc->mc_flags & C_INITIALIZED))
-			rc = mdb_cursor_first(mc, key, data);
-		else {
+			rc = mdb_cursor_last(mc, key, data);
+		else
+			rc = MDB_SUCCESS;
+		if (rc == MDB_SUCCESS) {
 			MDB_cursor *mx = &mc->mc_xcursor->mx_cursor;
 			if (mx->mc_flags & C_INITIALIZED) {
 				rc = mdb_cursor_sibling(mx, 0);

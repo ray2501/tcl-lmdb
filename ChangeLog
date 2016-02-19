@@ -1,5 +1,6 @@
 2016-02-19  Danilo Chang  <ray2501@gmail.com>
 
+    * generic/mdb.c: Update source code.
     * generic/tclmdb.c: Fix CURSOR del commmand option issue.
       Give the correct option check
     * generic/tclmdb.c: CURSOR get command add options:
