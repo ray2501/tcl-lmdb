@@ -1,7 +1,7 @@
 2016-02-21  Danilo Chang  <ray2501@gmail.com>
 
-    * generic/tclmdb.c: env_handle set_mapsize/set_maxreaders command
-      option add more check
+    * generic/tclmdb.c: env_handle set_mapsize/set_maxreaders/set_maxdbs
+      command option add more check
 
 2016-02-19  Danilo Chang  <ray2501@gmail.com>
 
