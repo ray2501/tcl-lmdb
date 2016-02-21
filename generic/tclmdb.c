@@ -1522,7 +1522,9 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       int value;
 
       if( objc == 3 ){
-        Tcl_GetIntFromObj(interp, objv[2], &value);
+        if(Tcl_GetIntFromObj(interp, objv[2], &value) != TCL_OK) {
+            return TCL_ERROR;
+        }
       }else{
         Tcl_WrongNumArgs(interp, 2, objv, "force");
         return TCL_ERROR;
