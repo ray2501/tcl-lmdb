@@ -213,7 +213,7 @@ of error, a Tcl error is thrown.
 ### Cursor
 
 dbi_handle cursor -txn txnid  
-cursor_handle get ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? ?-next? ?-nextdup? ? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup?  
+cursor_handle get ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? ?-next? ?-nextdup? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup?  
 cursor_handle get -set key  
 cursor_handle get -set_range key  
 cursor_handle get -get_multiple key data  
