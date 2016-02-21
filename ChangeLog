@@ -3,7 +3,7 @@
     * generic/tclmdb.c: Add more check in several commands option
     * generic/mdb.c: Update source code.
     * generic/tclmdb.c: Fix CURSOR del commmand option issue.
-      Give the correct option check
+      Give -nodupdata correct option check
     * generic/tclmdb.c: CURSOR get command add options:
       -get_multiple and -next_multiple
 
