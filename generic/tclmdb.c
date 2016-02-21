@@ -1914,7 +1914,9 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
 
       if( objc < 4 || (objc&1)!=0 ){
           Tcl_WrongNumArgs(interp, 2, objv,
-          "-env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLEAN? ?-dupfixed BOOLEAN? ?-reversedup BOOLEAN? ?-create BOOLEAN? "
+          "-env env_handle ?-name database? ?-reversekey BOOLEAN? \
+           ?-dupsort BOOLEAN? ?-dupfixed BOOLEAN? ?-reversedup BOOLEAN? \
+           ?-create BOOLEAN? "
           );
 
         return TCL_ERROR;
