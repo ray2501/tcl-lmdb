@@ -1,5 +1,6 @@
 2016-02-21  Danilo Chang  <ray2501@gmail.com>
 
+    * Setup version to v0.3.2 to test.
     * generic/tclmdb.c: env_handle sync command option add more check
     * generic/tclmdb.c: env_handle set_mapsize/set_maxreaders/set_maxdbs
       command option add more check

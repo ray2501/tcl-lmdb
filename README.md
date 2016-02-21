@@ -216,6 +216,8 @@ dbi_handle cursor -txn txnid
 cursor_handle get ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? ?-next? ?-nextdup? ? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup?  
 cursor_handle get -set key  
 cursor_handle get -set_range key  
+cursor_handle get -get_multiple key data  
+cursor_handle get -next_multiple key data  
 cursor_handle get -get_both key data  
 cursor_handle get -get_both_range key data  
 cursor_handle put key data ?-current boolean? ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean?  
@@ -230,9 +232,19 @@ starting at 0 (for example, dbi0.c0 and dbi0.c1).
 
 The cursor_handle get command returns a list of {key value} pairs. -firstdup, 
 -lastdup, -nextnodup, -prevdup and -get_both only for -dupsort. -set is 
-position at specified key. -set_range is position at first key greater than 
-or equal to specified key. -get_both is position at key/data pair. Only for 
--dupsort. -get_both_range is position at key, nearest data. Only for -dupsort.
+position at specified key.
+
+-set_range is position at first key greater than or equal to specified key.
+
+-get_multiple return key and up to a page of duplicate data items from
+current cursor position. Move cursor to prepare for -next_multiple.
+Only for -dupfixed.
+
+-next_multiple return key and up to a page of duplicate data items from next
+cursor position. Only for -dupfixed.
+
+-get_both is position at key/data pair. Only for -dupsort.
+-get_both_range is position at key, nearest data. Only for -dupsort.
 
 The cursor_handle put command stores key/data pairs into the database. 
 -nodupdata may only be specified if the database was opened with -dupsort. 
@@ -533,6 +545,84 @@ Examples
             puts $data
         }
         }
+    }
+
+    $mycursor close
+    $mytxn2 abort
+    $mytxn2 close
+
+    $mydbi close -env $myenv
+    $myenv close
+    exit
+
+### Cursor (-get_multiple and -next_multiple, for 0.3.2)
+
+    package require lmdb
+
+    set myenv [lmdb env]
+    $myenv set_mapsize 1073741824
+    $myenv set_maxdbs 10
+    file mkdir "fixeddb"
+
+    if {[catch {$myenv open -path "fixeddb"} error] != 0} {
+        puts "open database fail: $error"
+        $myenv close
+        exit
+    }
+
+    set mydbi [lmdb open -env $myenv -name "myfixeddb" \
+                        -dupsort 1 -dupfixed 1 -create 1]
+
+    set mytxn [$myenv txn]
+    for {set i 1} {$i < 20} {incr i} {
+        for {set j 1} {$j < 20} {incr j} {
+            set key [format "%04d" $i]
+            set value [format "%08d" [expr $j * $j]]
+            $mydbi put $key $value -txn $mytxn
+        }
+    }
+
+    $mytxn commit
+    $mytxn close
+
+    set mytxn2 [$myenv txn]
+    set mycursor [$mydbi cursor -txn $mytxn2]
+
+    set data [$mycursor get -first]
+    set key [lindex $data 0]
+    set value [lindex $data 1]
+
+    # -get_multiple return key and up to a page of duplicate data items
+    # from current cursor position
+    set data [$mycursor get -get_multiple $key $value]
+    set key [lindex $data 0]
+    puts "key is $key"
+    puts "=========="
+    set value [lindex $data 1]
+
+    # parse value string (all in a string)
+    set length [expr [string length $value] / 8]
+    for {set index 0} {$index < $length} {incr index 1} {
+        set sub_value [string range $value [expr $index * 8] [expr $index * 8 + 7]]
+        puts $sub_value
+    }
+
+    while { [catch {set data [$mycursor get -nextnodup]} result] == 0} {
+        # -next_multiple return key and up to a page of duplicate data items
+        # from next cursor position
+        set data [$mycursor get -next_multiple $key $value]
+        set key [lindex $data 0]
+        puts "key is $key"
+        puts "=========="
+        set value [lindex $data 1]
+
+        set length [expr [string length $value] / 8]
+        for {set index 0} {$index < $length} {incr index 1} {
+            set sub_value [string range $value [expr $index * 8] [expr $index * 8 + 7]]
+            puts $sub_value
+        }
+
+        puts "=========="
     }
 
     $mycursor close
