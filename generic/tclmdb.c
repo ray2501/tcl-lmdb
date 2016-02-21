@@ -1441,7 +1441,9 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       Tcl_WideInt wideValue;
 
       if( objc == 3 ){
-        Tcl_GetWideIntFromObj(interp, objv[2], &wideValue);
+        if(Tcl_GetWideIntFromObj(interp, objv[2], &wideValue) != TCL_OK) {
+            return TCL_ERROR;
+        }
       }else{
         Tcl_WrongNumArgs(interp, 2, objv, "size");
         return TCL_ERROR;
@@ -1466,7 +1468,9 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       int value;
 
       if( objc == 3 ){
-        Tcl_GetIntFromObj(interp, objv[2], &value);
+        if(Tcl_GetIntFromObj(interp, objv[2], &value) != TCL_OK) {
+            return TCL_ERROR;
+        }
       }else{
         Tcl_WrongNumArgs(interp, 2, objv, "nReaders ");
         return TCL_ERROR;

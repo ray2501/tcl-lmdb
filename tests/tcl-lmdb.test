@@ -31,14 +31,23 @@ test lmdb-1.2 {create a environment} {*}{
     -result {env0}
 }
 
-test lmdb-1.3 {Setup mapsize} {*}{
+test lmdb-1.3 {Setup mapsize, expected interger} {*}{
+    -body {
+    env0 set_mapsize "mytest"
+    }
+    -returnCodes error
+    -match glob
+    -result {expected integer*}
+}
+
+test lmdb-1.4 {Setup mapsize} {*}{
     -body {
     env0 set_mapsize 1073741824
     }
     -result {0}
 }
 
-test lmdb-1.4 {Open a environment, wrong # args} {*}{
+test lmdb-1.5 {Open a environment, wrong # args} {*}{
     -body {
     env0 open
     }
@@ -47,7 +56,7 @@ test lmdb-1.4 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.5 {Open a environment, wrong # args} {*}{
+test lmdb-1.6 {Open a environment, wrong # args} {*}{
     -body {
     env0 open -path
     }
@@ -56,7 +65,7 @@ test lmdb-1.5 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.6 {Open a environment} {*}{
+test lmdb-1.7 {Open a environment} {*}{
     -body {
     env0 open -path $testdir
     }
