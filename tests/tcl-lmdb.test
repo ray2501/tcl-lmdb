@@ -63,7 +63,23 @@ test lmdb-1.6 {set_maxdbs} {*}{
     -result {0}
 }
 
-test lmdb-1.7 {Open a environment, wrong # args} {*}{
+test lmdb-1.7 {set_maxreaders, expected interger} {*}{
+    -body {
+    env0 set_maxreaders "mytest"
+    }
+    -returnCodes error
+    -match glob
+    -result {expected integer*}
+}
+
+test lmdb-1.8 {set_maxreaders} {*}{
+    -body {
+    env0 set_maxreaders 127
+    }
+    -result {0}
+}
+
+test lmdb-1.9 {Open a environment, wrong # args} {*}{
     -body {
     env0 open
     }
@@ -72,7 +88,7 @@ test lmdb-1.7 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.8 {Open a environment, wrong # args} {*}{
+test lmdb-1.10 {Open a environment, wrong # args} {*}{
     -body {
     env0 open -path
     }
@@ -81,7 +97,7 @@ test lmdb-1.8 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.9 {Open a environment, expected integer} {*}{
+test lmdb-1.11 {Open a environment, expected integer} {*}{
     -body {
     env0 open -path $testdir -mode "Error"
     }
@@ -90,7 +106,7 @@ test lmdb-1.9 {Open a environment, expected integer} {*}{
     -result {expected integer*}
 }
 
-test lmdb-1.10 {Open a environment} {*}{
+test lmdb-1.12 {Open a environment} {*}{
     -body {
     env0 open -path $testdir -mode 0664
     }
