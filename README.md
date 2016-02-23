@@ -97,11 +97,11 @@ env_handle get_maxreaders
 env_handle get_maxkeysize  
 env_handle close  
 
-The lmdb env create an environment handle env_handle. The returned 
+The `lmdb env` create an environment handle env_handle. The returned 
 environment handle is bound to a Tcl command of the form envN, where N 
 is an integer starting at 0 (for example, env0 and env1).
 
-The env_handle open open an environment handle. The path is the directory 
+The `env_handle open` open an environment handle. The path is the directory 
 in which the database files reside. This directory must already exist and 
 be writable. The mode is the UNIX permissions to set on created files and 
 semaphores. This parameter is ignored on Windows. -nosync flag setup don't 
@@ -118,31 +118,31 @@ supports it. Turning it off may help random read performance when the DB
 is larger than RAM and system RAM is full. The option is not implemented 
 on Windows.
 
-The env_handle set_mapsize size set the size of the memory map to use for 
+The `env_handle set_mapsize size` set the size of the memory map to use for 
 this environment. Default size of memory map is 10485760. Apps should always 
 set the size explicitly using env_handle set_mapsize to setup size of the 
 memory map.
 
-The env_handle set_maxdbs set the maximum number of named databases for 
+The `env_handle set_maxdbs` set the maximum number of named databases for 
 the environment. This command is only needed if multiple databases will 
 be used in the environment. Simpler applications that use the environment 
 as a single unnamed database can ignore this option. This function may 
 only be called after lmdb env and before env_handle open command.
 
-The env_handle sync flush the data buffers to disk. force is non-zero, 
+The `env_handle sync` flush the data buffers to disk. force is non-zero, 
 force a synchronous flush. 0 do nothing. Data is always written to disk 
 when is called, but the operating system may keep it buffered. LMDB 
 always flushes the OS buffers upon commit as well, unless the environment 
 was opened with -nosync. This command returns 0 on success, and in the 
 case of error, a Tcl error is thrown.
 
-The env_handle copy copy an LMDB environment to the specified path. 
+The `env_handle copy` copy an LMDB environment to the specified path. 
 -cp_compact perform compaction while copying. This command returns 0 on 
 success, and in the case of error, a Tcl error is thrown.
 
-The env_handle stat return statistics list about the LMDB environment.
+The `env_handle stat` return statistics list about the LMDB environment.
 
-The env_handle close command close the environment and release the memory
+The `env_handle close` command close the environment and release the memory
 map. This command returns 0 on success, and in the case of error, a Tcl 
 error is thrown.
 
@@ -156,7 +156,7 @@ dbi_handle drop del_flag -txn txnid
 dbi_handle stat -txn txnid  
 dbi_handle close -env env_handle  
 
-The command lmdb open create a database handle. -name database is the name 
+The command `lmdb open` create a database handle. -name database is the name 
 of the database to open option. If only a single database is needed in the 
 environment, skip to setup database name (or you need use env_handle 
 set_maxdbs to set the maximum number of named databases for the environment).
@@ -172,23 +172,24 @@ allowed in a read-only transaction or a read-only environment. The returned
 database handle is bound to a Tcl command of the form dbiN, where N is an 
 integer starting at 0 (for example, dbi0 and dbi1).
 
-The command dbi_handle get get items from a database. If the database 
+The command `dbi_handle get` get items from a database. If the database 
 supports duplicate keys -dupsort then the first data item for the key will 
 be returned. Retrieval of other items requires the use of cursor_handle get.
 
-The command dbi_handle put store items into a database. -nodupdata may only 
+The command `dbi_handle put` store items into a database. -nodupdata may only 
 be specified if the database was opened with -dupsort. -nooverwrite enter 
 the new key/data pair only if the key does not already appear in the database.
 
-The command dbi_handle del delete items from a database. If the database 
+The command `dbi_handle del` delete items from a database. If the database 
 supports sorted duplicates and the data parameter is "" (empty string), 
 all of the duplicate data items for the key will be deleted. Otherwise, if 
 the data parameter is non-NULL only the matching data item will be deleted.
 
-The command dbi_handle drop empty or delete+close a database. del_flag setup 0 
-to empty the DB, 1 to delete it from the environment and close the DB handle.
+The command `dbi_handle drop` empty or delete+close a database.
+del_flag setup 0 to empty the DB, 1 to delete it from the environment and 
+close the DB handle.
 
-The command dbi_handle stat return statistics list for a database.
+The command `dbi_handle stat` return statistics list for a database.
 
 ### Transactions
 
@@ -205,10 +206,11 @@ The command env_handle txn create a transaction for use with the environment.
 transaction handle is bound to a Tcl command of the form env.txnX, where X is 
 an integer starting at 0 (for example, env0.txn0 and env0.txn1).
 
-The command txn_handle reset reset a read-only transaction. Abort the 
-transaction like txn_handle abort, but keep the transaction handle. txn_handle 
-renew may reuse the handle. This command returns 0 on success, and in the case 
-of error, a Tcl error is thrown.
+The command `txn_handle reset` reset a read-only transaction.
+Abort the transaction like txn_handle abort, but keep the transaction handle.
+
+`txn_handle renew` may reuse the handle. This command returns 0 on success,
+and in the case of error, a Tcl error is thrown.
 
 ### Cursor
 
@@ -230,7 +232,7 @@ The dbi_handle cursor command creates a database cursor. The returned cursor
 handle is bound to a Tcl command of the form dbiN.cX, where X is an integer 
 starting at 0 (for example, dbi0.c0 and dbi0.c1).
 
-The cursor_handle get command returns a list of {key value} pairs. -firstdup, 
+The `cursor_handle get` command returns a list of {key value} pairs. -firstdup,
 -lastdup, -nextnodup, -prevdup and -get_both only for -dupsort. -set is 
 position at specified key.
 
@@ -246,23 +248,23 @@ cursor position. Only for -dupfixed.
 -get_both is position at key/data pair. Only for -dupsort.
 -get_both_range is position at key, nearest data. Only for -dupsort.
 
-The cursor_handle put command stores key/data pairs into the database. 
+The `cursor_handle put` command stores key/data pairs into the database. 
 -nodupdata may only be specified if the database was opened with -dupsort. 
 This command returns 0 on success, and in the case of error, a Tcl error is 
 thrown.
 
-The cursor_handle del command deletes the key/data pair to which the cursor 
+The `cursor_handle del` command deletes the key/data pair to which the cursor 
 refers. This command returns 0 on success, and in the case of error, a Tcl error 
 is thrown.
 
-The cursor_handle renew command renew a cursor handle. A cursor is associated 
+The `cursor_handle renew` command renew a cursor handle. A cursor is associated 
 with a specific transaction and database. Cursors that are only used in 
 read-only transactions may be re-used, to avoid unnecessary malloc/free 
 overhead. The cursor may be associated with a new read-only transaction, and 
 referencing the same database handle as it was created with. This may be done 
 whether the previous transaction is live or dead.
 
-The cursor_handle count command return count of duplicates for current key. 
+The `cursor_handle count` command return count of duplicates for current key. 
 This command is only valid on databases that support sorted duplicate data 
 items -dupsort. 
 
