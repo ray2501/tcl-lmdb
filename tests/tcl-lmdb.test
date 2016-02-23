@@ -65,9 +65,18 @@ test lmdb-1.6 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.7 {Open a environment} {*}{
+test lmdb-1.7 {Open a environment, expected integer} {*}{
     -body {
-    env0 open -path $testdir
+    env0 open -path $testdir -mode "Error"
+    }
+    -returnCodes error
+    -match glob
+    -result {expected integer*}
+}
+
+test lmdb-1.8 {Open a environment} {*}{
+    -body {
+    env0 open -path $testdir -mode 0664
     }
     -result {0}
 }
@@ -156,14 +165,23 @@ test lmdb-2.10 {Cursor} {*}{
     -result {dbi0.c0}
 }
 
-test lmdb-2.11 {Cursor close} {*}{
+test lmdb-2.11 {Cursor del, wrong # args} {*}{
+    -body {
+    dbi0.c0 del -nodupdata
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+test lmdb-2.12 {Cursor close} {*}{
     -body {
     dbi0.c0 close
     }
     -result {0}
 }
 
-test lmdb-2.12 {Delete, wrong # args} {*}{
+test lmdb-2.13 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -txn
     }
@@ -172,14 +190,32 @@ test lmdb-2.12 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.13 {Delete} {*}{
+test lmdb-2.14 {Delete, wrong # args} {*}{
+    -body {
+    dbi0 del "1234" "567890" -test env0.txn0 -txn
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+test lmdb-2.15 {Delete} {*}{
     -body {
     dbi0 del "1234" "" -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.14 {Commit} {*}{
+test lmdb-2.16 {Drop, wrong # args} {*}{
+    -body {
+    dbi0 drop "mytest" -txn env0.txn0
+    }
+    -returnCodes error
+    -match glob
+    -result {expected integer*}
+}
+
+test lmdb-2.17 {Commit} {*}{
     -body {
     env0.txn0 commit
     }

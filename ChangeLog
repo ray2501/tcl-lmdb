@@ -1,3 +1,9 @@
+2016-02-23  Danilo Chang  <ray2501@gmail.com>
+
+    * Add more check in env_handle open -mode option
+    * Improve dbi_handle drop command option check
+    * Improve dbi_handle del command option check
+
 2016-02-21  Danilo Chang  <ray2501@gmail.com>
 
     * Setup version to v0.3.2 to test.
@@ -9,7 +15,7 @@
 
     * generic/tclmdb.c: Add more check in several commands option
     * generic/mdb.c: Update source code.
-    * generic/tclmdb.c: Fix CURSOR del commmand option issue.
+    * generic/tclmdb.c: Fix CURSOR del command option issue.
       Give -nodupdata correct option check
     * generic/tclmdb.c: CURSOR get command add options:
       -get_multiple and -next_multiple

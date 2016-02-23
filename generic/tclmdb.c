@@ -770,7 +770,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       char *txnHandle = NULL;
       int i = 0;
 
-      if( objc < 6 ){
+      if( objc < 6 || (objc&1)!=0 ){
         Tcl_WrongNumArgs(interp, 2, objv, "key data -txn txnid");
         return TCL_ERROR;
       }
@@ -867,12 +867,14 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       char *txnHandle = NULL;
       int i = 0;
 
-      if( objc < 5 ){
+      if( objc < 5  || (objc&1)!=1 ){
         Tcl_WrongNumArgs(interp, 2, objv, "del_flag -txn txnid");
         return TCL_ERROR;
       }
 
-      Tcl_GetIntFromObj(interp, objv[2], &del_flag);
+      if(Tcl_GetIntFromObj(interp, objv[2], &del_flag) != TCL_OK) {
+            return TCL_ERROR;
+        }
 
       for(i=3; i+1<objc; i+=2){
         zArg = Tcl_GetStringFromObj(objv[i], 0);
@@ -1359,7 +1361,9 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         if( strcmp(zArg, "-path")==0 ){
             path = Tcl_GetStringFromObj(objv[i+1], 0);
         } else if( strcmp(zArg, "-mode")==0 ){
-            Tcl_GetIntFromObj(interp, objv[i+1], &mode);
+            if(Tcl_GetIntFromObj(interp, objv[i+1], &mode) != TCL_OK) {
+                return TCL_ERROR;
+            }
         } else if( strcmp(zArg, "-fixedmap")==0 ){
             int b;
             if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
