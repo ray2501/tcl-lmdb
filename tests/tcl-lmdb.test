@@ -56,7 +56,14 @@ test lmdb-1.5 {set_maxdbs, expected interger} {*}{
     -result {expected integer*}
 }
 
-test lmdb-1.6 {Open a environment, wrong # args} {*}{
+test lmdb-1.6 {set_maxdbs} {*}{
+    -body {
+    env0 set_maxdbs 10
+    }
+    -result {0}
+}
+
+test lmdb-1.7 {Open a environment, wrong # args} {*}{
     -body {
     env0 open
     }
@@ -65,7 +72,7 @@ test lmdb-1.6 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.7 {Open a environment, wrong # args} {*}{
+test lmdb-1.8 {Open a environment, wrong # args} {*}{
     -body {
     env0 open -path
     }
@@ -74,7 +81,7 @@ test lmdb-1.7 {Open a environment, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-1.8 {Open a environment, expected integer} {*}{
+test lmdb-1.9 {Open a environment, expected integer} {*}{
     -body {
     env0 open -path $testdir -mode "Error"
     }
@@ -83,7 +90,7 @@ test lmdb-1.8 {Open a environment, expected integer} {*}{
     -result {expected integer*}
 }
 
-test lmdb-1.9 {Open a environment} {*}{
+test lmdb-1.10 {Open a environment} {*}{
     -body {
     env0 open -path $testdir -mode 0664
     }
