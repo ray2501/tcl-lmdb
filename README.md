@@ -179,6 +179,8 @@ be returned. Retrieval of other items requires the use of cursor_handle get.
 The command `dbi_handle put` store items into a database. -nodupdata may only 
 be specified if the database was opened with -dupsort. -nooverwrite enter 
 the new key/data pair only if the key does not already appear in the database.
+-append is given key/data pair to the end of the database.
+-appenddup as -append, but for sorted dup data.
 
 The command `dbi_handle del` delete items from a database. If the database 
 supports sorted duplicates and the data parameter is "" (empty string), 
