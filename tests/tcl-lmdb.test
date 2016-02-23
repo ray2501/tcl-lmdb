@@ -181,7 +181,23 @@ test lmdb-2.10 {Cursor} {*}{
     -result {dbi0.c0}
 }
 
-test lmdb-2.11 {Cursor del, wrong # args} {*}{
+test lmdb-2.11 {Cursor put, wrong # args} {*}{
+    -body {
+    dbi0.c0 put "5678" "123490" -append
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+test lmdb-2.12 {Cursor put} {*}{
+    -body {
+    dbi0.c0 put "5678" "123490" -append 1
+    }
+    -result {0}
+}
+
+test lmdb-2.13 {Cursor del, wrong # args} {*}{
     -body {
     dbi0.c0 del -nodupdata
     }
@@ -190,14 +206,22 @@ test lmdb-2.11 {Cursor del, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.12 {Cursor close} {*}{
+test lmdb-2.14 {Cursor del} {*}{
+    -body {
+    dbi0.c0 get -last
+    dbi0.c0 del
+    }
+    -result {0}
+}
+
+test lmdb-2.15 {Cursor close} {*}{
     -body {
     dbi0.c0 close
     }
     -result {0}
 }
 
-test lmdb-2.13 {Delete, wrong # args} {*}{
+test lmdb-2.16 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -txn
     }
@@ -206,7 +230,7 @@ test lmdb-2.13 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.14 {Delete, wrong # args} {*}{
+test lmdb-2.17 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -test env0.txn0 -txn
     }
@@ -215,14 +239,14 @@ test lmdb-2.14 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.15 {Delete} {*}{
+test lmdb-2.18 {Delete} {*}{
     -body {
     dbi0 del "1234" "" -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.16 {Drop, wrong # args} {*}{
+test lmdb-2.19 {Drop, wrong # args} {*}{
     -body {
     dbi0 drop "mytest" -txn env0.txn0
     }
@@ -231,14 +255,14 @@ test lmdb-2.16 {Drop, wrong # args} {*}{
     -result {expected integer*}
 }
 
-test lmdb-2.17 {Drop} {*}{
+test lmdb-2.20 {Drop} {*}{
     -body {
     dbi0 drop 0 -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.18 {Commit} {*}{
+test lmdb-2.21 {Commit} {*}{
     -body {
     env0.txn0 commit
     }

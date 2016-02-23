@@ -249,9 +249,25 @@ cursor position. Only for -dupfixed.
 -get_both_range is position at key, nearest data. Only for -dupsort.
 
 The `cursor_handle put` command stores key/data pairs into the database. 
--nodupdata may only be specified if the database was opened with -dupsort. 
-This command returns 0 on success, and in the case of error, a Tcl error is 
-thrown.
+
+-current replace the item at the current cursor position.
+The `key` parameter must still be provided, and must match it.
+If using sorted duplicates (-dupsort) the data item must still 
+sort into the same place.
+
+-nodupdata may only be specified if the database was opened 
+with -dupsort.
+
+-nooverwrite enter the new key/data pair only if the key 
+does not already appear in the database.
+
+-append is given key/data pair to the end of the database.
+No key comparisons are performed.
+
+-appenddup as -append, but for sorted dup data.
+
+This command returns 0 on success, and in the case of error,
+a Tcl error is thrown.
 
 The `cursor_handle del` command deletes the key/data pair to which the cursor 
 refers. This command returns 0 on success, and in the case of error, a Tcl error 
