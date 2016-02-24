@@ -142,6 +142,12 @@ success, and in the case of error, a Tcl error is thrown.
 
 The `env_handle stat` return statistics list about the LMDB environment.
 
+The `env_handle get_maxreaders` get the maximum number of threads/reader 
+slots for the environment.
+
+The `env_handle get_maxkeysize` get the maximum size of keys and -dupsort 
+data we can write. Default 511.
+
 The `env_handle close` command close the environment and release the memory
 map. This command returns 0 on success, and in the case of error, a Tcl 
 error is thrown.
