@@ -917,6 +917,19 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
+      /*
+       * Improve dbi_handle drop command behavior when del_flag equals 1.
+       * If del_flag equals 1, delete dbi_handle command.
+       *
+       * mdb_drop close the DB handle if del_flag equals 1, I think need do this.
+       */
+      if(del_flag) {
+          Tcl_MutexLock(&myMutex);
+          if( hashEntryPtr )  Tcl_DeleteHashEntry(hashEntryPtr);
+          Tcl_MutexUnlock(&myMutex);
+          Tcl_DeleteCommand(interp, dbiHandle);
+      }
+
       Tcl_SetObjResult(interp, Tcl_NewIntObj( 0 ));
 
       break;
