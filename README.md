@@ -199,6 +199,8 @@ close the DB handle.
 
 The command `dbi_handle stat` return statistics list for a database.
 
+The `dbi_handle close` command close a database handle.
+
 ### Transactions
 
 env_handle txn ?-parent txnid? ?-readonly boolean?  
@@ -290,7 +292,9 @@ whether the previous transaction is live or dead.
 
 The `cursor_handle count` command return count of duplicates for current key. 
 This command is only valid on databases that support sorted duplicate data 
-items -dupsort. 
+items -dupsort.
+
+The `cursor_handle close` command close a cursor handle.
 
 
 Examples
