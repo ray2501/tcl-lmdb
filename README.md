@@ -137,8 +137,10 @@ was opened with -nosync. This command returns 0 on success, and in the
 case of error, a Tcl error is thrown.
 
 The `env_handle copy` copy an LMDB environment to the specified path. 
--cp_compact perform compaction while copying. This command returns 0 on 
-success, and in the case of error, a Tcl error is thrown.
+-cp_compact perform compaction while copying 
+(-cp_compact option only work when LMDB version > 0.9.13).
+This command returns 0 on success,
+and in the case of error, a Tcl error is thrown.
 
 The `env_handle stat` return statistics list about the LMDB environment.
 
@@ -221,6 +223,8 @@ Abort the transaction like txn_handle abort, but keep the transaction handle.
 
 `txn_handle renew` may reuse the handle. This command returns 0 on success,
 and in the case of error, a Tcl error is thrown.
+
+`txn_handle close` command close a transaction handle.
 
 ### Cursor
 
