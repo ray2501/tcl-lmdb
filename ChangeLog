@@ -1,3 +1,7 @@
+2016-02-25  Danilo Chang  <ray2501@gmail.com>
+
+    * Setup version to v0.3.3
+
 2016-02-24  Danilo Chang  <ray2501@gmail.com>
 
     * Improve dbi_handle drop command behavior when del_flag equals 1.
