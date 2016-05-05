@@ -4,11 +4,11 @@
 
 Name:          tcl-lmdb
 Summary:       Tcl interface for LMDB
-Version:       0.3.3
+Version:       0.3.4
 Release:       2
 License:       BSD
 Group:         Development/Libraries/Tcl
-Source:        https://sites.google.com/site/ray2501/tcl-lmdb/tcl-lmdb_0.3.3.zip
+Source:        https://sites.google.com/site/ray2501/tcl-lmdb/tcl-lmdb_0.3.4.zip
 URL:           https://sites.google.com/site/ray2501/tcl-lmdb 
 Buildrequires: tcl >= 8.1
 BuildRoot:     %{buildroot}
