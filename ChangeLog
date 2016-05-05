@@ -1,3 +1,16 @@
+2016-05-05  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update LMDB source code.
+      Fix MDB_NEXT_DUP after mdb_cursor_del (ITS#8412)
+      Fix xcursors after mdb_cursor_del (ITS#8406)
+      mdb_drop optimization
+      Fix MDB_GET_BOTH on non-dup record (ITS#8393)
+    * UTF-8 character stripped issue patch from gahr (merge code)
+
+2016-04-13  Danilo Chang  <ray2501@gmail.com>
+
+    * fix-compiler-warnings patch from gahr (merge code)
+
 2016-02-25  Danilo Chang  <ray2501@gmail.com>
 
     * Setup version to v0.3.3
@@ -138,7 +151,7 @@
 
 2015-11-07  Danilo Chang  <ray2501@gmail.com>
 
-    * generic/tclmdb.c: Add more check in env_handle copy  
+    * generic/tclmdb.c: Add more check in env_handle copy
       command. Fix --with-system-lmdb option issue.
     * Set version to v0.2.1
     * generic/tclmdb.c: Implement cursor_handle get command
@@ -158,9 +171,9 @@
 2015-11-05  Danilo Chang  <ray2501@gmail.com>
 
     * Set version to v0.2
-    * generic/tclmdb.c: Update source code   
+    * generic/tclmdb.c: Update source code
     * generic/mdb.c: Update source code
-    * generic/tclmdb.c: Implement dbi_handle stat command    
+    * generic/tclmdb.c: Implement dbi_handle stat command
     * generic/tclmdb.c: lmdb open command add option:
       -reversekey and -reversedup
     * Makefile.in: add workaround for glibc pthread
