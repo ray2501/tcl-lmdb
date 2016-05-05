@@ -285,6 +285,42 @@ test lmdb-2.21 {Commit} {*}{
     -result {0}
 }
 
+test lmdb-2.22 {UTF8} {*}{
+    -body {
+    set k {Linn‘us}
+    set v {ℕ ⊆ ℕ₀ ⊂ ℤ ⊂ ℚ ⊂ ℝ ⊂ ℂ}
+    set mytxn [env0 txn]
+    dbi0 put $k $v -txn $mytxn
+    $mytxn commit
+    $mytxn close
+    set mytxn [env0 txn -readonly 1]
+    set r [dbi0 get $k -txn $mytxn]
+    $mytxn abort
+    $mytxn close
+    string compare $r $v
+    } -result 0
+}
+
+test lmdb-2.23 {Binary key and value} {*}{
+    -body {
+    # generate 255 random bytes
+    for {set i 1} {$i < 256} {incr i} {
+        set ch [expr {int(rand()*100)}]
+        append txt [binary format c $ch]
+    }
+    set k $txt
+    set v $k
+    set mytxn [env0 txn]
+    dbi0 put $k $v -txn $mytxn
+    $mytxn commit
+    $mytxn close
+    set mytxn [env0 txn -readonly 1]
+    set r [dbi0 get $k -txn $mytxn]
+    $mytxn abort
+    $mytxn close
+    expr {$r eq $k && $r eq $v}
+    } -result 1
+}
 
 #-------------------------------------------------------------------------------
 
