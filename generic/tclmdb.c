@@ -134,8 +134,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
     case CUR_GET: {
       char *zArg;
-      unsigned char *key;
-      unsigned char *data;
+      char *key;
+      char *data;
       int len;
       MDB_val mkey;
       MDB_val mdata;
@@ -212,7 +212,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
            return TCL_ERROR; // This option need a key
          }
 
-         key = Tcl_GetByteArrayFromObj(objv[3], &len);
+         key = Tcl_GetStringFromObj(objv[3], &len);
          if( !key || len < 1 ){
            return TCL_ERROR;
          }
@@ -231,7 +231,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
            return TCL_ERROR; // This option need a key and data
          }
 
-         key = Tcl_GetByteArrayFromObj(objv[3], &len);
+         key = Tcl_GetStringFromObj(objv[3], &len);
          if( !key || len < 1 ){
            return TCL_ERROR;
          }
@@ -239,7 +239,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
          mkey.mv_size = len;
          mkey.mv_data = key;
 
-         data = Tcl_GetByteArrayFromObj(objv[4], &len);
+         data = Tcl_GetStringFromObj(objv[4], &len);
          if( !data || len < 1 ){
            return TCL_ERROR;
          }
@@ -259,8 +259,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       pResultStr = Tcl_NewListObj(0, NULL);
-      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mkey.mv_data, mkey.mv_size));
-      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mdata.mv_data, mdata.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
 
       Tcl_SetObjResult(interp, pResultStr);
 
@@ -269,8 +269,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
     case CUR_PUT: {
       char *zArg;
-      unsigned char *key;
-      unsigned char *data;
+      char *key;
+      char *data;
       int key_len;
       int data_len;
       MDB_val mkey;
@@ -283,12 +283,12 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      key = Tcl_GetByteArrayFromObj(objv[2], &key_len);
+      key = Tcl_GetStringFromObj(objv[2], &key_len);
       if( !key || key_len < 1 ){
          return TCL_ERROR;
       }
 
-      data = Tcl_GetByteArrayFromObj(objv[3], &data_len);
+      data = Tcl_GetStringFromObj(objv[3], &data_len);
       if( !data || data_len < 1 ){
          return TCL_ERROR;
       }
@@ -573,8 +573,8 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
   switch( (enum DBI_enum)choice ){
 
     case DBI_PUT: {
-      unsigned char *key;
-      unsigned char *data;
+      char *key;
+      char *data;
       int key_len;
       int data_len;
       MDB_val mkey;
@@ -591,12 +591,12 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      key = Tcl_GetByteArrayFromObj(objv[2], &key_len);
+      key = Tcl_GetStringFromObj(objv[2], &key_len);
       if( !key || key_len < 1 ){
         return TCL_ERROR;
       }
 
-      data = Tcl_GetByteArrayFromObj(objv[3], &data_len);
+      data = Tcl_GetStringFromObj(objv[3], &data_len);
       if( !data || data_len < 1 ){
         return TCL_ERROR;
       }
@@ -685,7 +685,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     }
 
     case DBI_GET: {
-      unsigned char *key;
+      char *key;
       int len;
       MDB_val mkey;
       MDB_val mdata;
@@ -701,7 +701,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      key = Tcl_GetByteArrayFromObj(objv[2], &len);
+      key = Tcl_GetStringFromObj(objv[2], &len);
       if( !key || len < 1 ){
         return TCL_ERROR;
       }
@@ -751,15 +751,15 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      pResultStr = Tcl_NewByteArrayObj( mdata.mv_data, mdata.mv_size );
+      pResultStr = Tcl_NewStringObj( mdata.mv_data, mdata.mv_size );
       Tcl_SetObjResult(interp, pResultStr);
 
       break;
     }
 
     case DBI_DEL: {
-      unsigned char *key;
-      unsigned char *data;
+      char *key;
+      char *data;
       int key_len;
       int data_len;
       MDB_val mkey;
@@ -776,7 +776,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      key = Tcl_GetByteArrayFromObj(objv[2], &key_len);
+      key = Tcl_GetStringFromObj(objv[2], &key_len);
       if( !key || key_len < 1 ){
         return TCL_ERROR;
       }
@@ -785,7 +785,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
        * Improve this command behavior.
        * If user indicates data is an empty string "", don't return error.
        */
-      data = Tcl_GetByteArrayFromObj(objv[3], &data_len);
+      data = Tcl_GetStringFromObj(objv[3], &data_len);
       if( !data || data_len < 1 ){
         //return TCL_ERROR;
         isEmptyData = 1;
