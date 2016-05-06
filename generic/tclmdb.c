@@ -1357,10 +1357,8 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       const char *zArg;
       char *path = NULL;
       mdb_mode_t mode = 0664;
-      int flags;
+      int flags = 0;
       int i = 0;
-
-      flags = MDB_FIXEDMAP;
 
       if( objc < 4 || (objc&1)!=0 ){
         Tcl_WrongNumArgs(interp, 1, objv,
