@@ -568,7 +568,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     return TCL_ERROR;
   }
 
-  dbi = (MDB_dbi)Tcl_GetHashValue( hashEntryPtr );
+  dbi = (MDB_dbi)(uintptr_t)Tcl_GetHashValue( hashEntryPtr );
 
   switch( (enum DBI_enum)choice ){
 
