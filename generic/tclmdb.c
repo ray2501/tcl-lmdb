@@ -1356,7 +1356,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBENV_OPEN: {
       const char *zArg;
       char *path = NULL;
-      mdb_mode_t mode = 0664;
+      int mode = 0664;
       int flags = 0;
       int i = 0;
 
@@ -1373,7 +1373,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         if( strcmp(zArg, "-path")==0 ){
             path = Tcl_GetStringFromObj(objv[i+1], 0);
         } else if( strcmp(zArg, "-mode")==0 ){
-            if(Tcl_GetIntFromObj(interp, objv[i+1], (int *)&mode) != TCL_OK) {
+            if(Tcl_GetIntFromObj(interp, objv[i+1], &mode) != TCL_OK) {
                 return TCL_ERROR;
             }
         } else if( strcmp(zArg, "-fixedmap")==0 ){
@@ -1438,7 +1438,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      result = mdb_env_open(env, path, flags, mode);
+      result = mdb_env_open(env, path, flags, (mdb_mode_t)mode);
       if(result != 0) {
         if( interp ) {
             Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
