@@ -1,3 +1,17 @@
+2016-05-10  Danilo Chang  <ray2501@gmail.com>
+
+    * Setup version to v0.3.5 to test
+    * Fix overflow of a nearby variable on the stack
+      patch from gahr (merge code)
+
+2016-05-09  Danilo Chang  <ray2501@gmail.com>
+
+    * Chase gcc 4.8 warning patch from gahr (merge code)
+
+2016-05-07  Danilo Chang  <ray2501@gmail.com>
+
+    * env open command: let -fixedmap default to false
+
 2016-05-06  Danilo Chang  <ray2501@gmail.com>
 
     * Setup version to v0.3.4 to test
