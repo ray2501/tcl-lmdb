@@ -28,7 +28,7 @@ Documents
 =====
 
 * [LMDB Source code] (https://github.com/LMDB/lmdb)
-* [LMDB C API reference] (http://symas.com/mdb/doc/index.html)
+* [LMDB C API reference] (http://lmdb.tech/doc/)
 
 
 UNIX BUILD
