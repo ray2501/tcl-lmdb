@@ -1,3 +1,9 @@
+2016-07-03  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update LMDB source code.
+      Solaris 10/11 robust mutex fixes (ITS#8339)
+      init cursor in mdb_env_cwalk (ITS#8424)
+
 2016-05-10  Danilo Chang  <ray2501@gmail.com>
 
     * Setup version to v0.3.5 to test
