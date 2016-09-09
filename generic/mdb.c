@@ -312,6 +312,10 @@ union semun {
 #  define MDB_USE_ROBUST	0
 # else
 #  define MDB_USE_ROBUST	1
+# endif
+#endif /* !MDB_USE_ROBUST */
+
+#if defined(MDB_USE_POSIX_MUTEX) && (MDB_USE_ROBUST)
 /* glibc < 2.12 only provided _np API */
 #  if (defined(__GLIBC__) && GLIBC_VER < 0x02000c) || \
 	(defined(PTHREAD_MUTEX_ROBUST_NP) && !defined(PTHREAD_MUTEX_ROBUST))
@@ -319,10 +323,9 @@ union semun {
 #   define pthread_mutexattr_setrobust(attr, flag)	pthread_mutexattr_setrobust_np(attr, flag)
 #   define pthread_mutex_consistent(mutex)	pthread_mutex_consistent_np(mutex)
 #  endif
-# endif
-#endif /* MDB_USE_ROBUST */
+#endif /* MDB_USE_POSIX_MUTEX && MDB_USE_ROBUST */
 
-#if defined(MDB_OWNERDEAD) && MDB_USE_ROBUST
+#if defined(MDB_OWNERDEAD) && (MDB_USE_ROBUST)
 #define MDB_ROBUST_SUPPORTED	1
 #endif
 
@@ -1748,7 +1751,7 @@ mdb_page_list(MDB_page *mp)
 			pgno, ((MDB_meta *)METADATA(mp))->mm_txnid);
 		return;
 	default:
-		fprintf(stderr, "Bad page %"Yu" flags 0x%u\n", pgno, mp->mp_flags);
+		fprintf(stderr, "Bad page %"Yu" flags 0x%X\n", pgno, mp->mp_flags);
 		return;
 	}
 
@@ -6698,6 +6701,7 @@ mdb_cursor_set(MDB_cursor *mc, MDB_val *key, MDB_val *data,
 						}
 					}
 					rc = 0;
+					mc->mc_flags &= ~C_EOF;
 					goto set2;
 				}
 			}
