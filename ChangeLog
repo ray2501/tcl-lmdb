@@ -1,9 +1,9 @@
-2016-01-12  Danilo Chang  <ray2501@gmail.com>
+2017-01-12  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update LMDB source code.
     * generic/tclmdb.c: Update year
 
-2016-01-04  Danilo Chang  <ray2501@gmail.com>
+2017-01-04  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update LMDB source code.
 
