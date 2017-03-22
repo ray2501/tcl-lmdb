@@ -14,21 +14,21 @@ no page cache layer of its own.
 
 For additional information on LMDB see
 
-[https://symas.com/products/lightning-memory-mapped-database/] (https://symas.com/products/lightning-memory-mapped-database/) 
+[https://symas.com/products/lightning-memory-mapped-database/](https://symas.com/products/lightning-memory-mapped-database/) 
 
 
 License
 =====
 
-LMDB is Licensed under the [OpenLDAP, Public License] (http://www.openldap.org/software/release/license.html).  
+LMDB is Licensed under the [OpenLDAP, Public License](http://www.openldap.org/software/release/license.html).  
 tcl-lmdb is Licensed under the 2-Clause BSD license.
 
 
 Documents
 =====
 
-* [LMDB Source code] (https://github.com/LMDB/lmdb)
-* [LMDB C API reference] (http://lmdb.tech/doc/)
+* [LMDB Source code](https://github.com/LMDB/lmdb)
+* [LMDB C API reference](http://lmdb.tech/doc/)
 
 
 UNIX BUILD
