@@ -10,7 +10,8 @@ License:       BSD
 Group:         Development/Libraries/Tcl
 Source:        https://sites.google.com/site/ray2501/tcl-lmdb/tcl-lmdb_0.3.5.zip
 URL:           https://sites.google.com/site/ray2501/tcl-lmdb 
-Buildrequires: tcl >= 8.1
+Buildrequires: tcl-devel >= 8.1
+Requires: tcl >= 8.1
 BuildRoot:     %{buildroot}
 
 %description
