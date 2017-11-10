@@ -626,8 +626,8 @@ S["INSTALL"]="$(SHELL) $(srcdir)/tclconfig/install-sh -c"
 S["CPP"]="gcc -E"
 S["TCL_SHLIB_LD_LIBS"]="${LIBS}"
 S["TCL_LD_FLAGS"]=" -Wl,--export-dynamic "
-S["TCL_EXTRA_CFLAGS"]="-fmessage-length=0 -grecord-gcc-switches -O2 -Wall -D_FORTIFY_SOURCE=2 -fstack-protector-strong -funwind-tables -fasynchronous-unwind-tables -g -pip"\
-"e "
+S["TCL_EXTRA_CFLAGS"]="-fmessage-length=0 -grecord-gcc-switches -O2 -Wall -D_FORTIFY_SOURCE=2 -fstack-protector-strong -funwind-tables -fasynchronous-unwind-tables -fstack"\
+"-clash-protection -g -pipe "
 S["TCL_DEFS"]="-DPACKAGE_NAME=\\\"tcl\\\" -DPACKAGE_TARNAME=\\\"tcl\\\" -DPACKAGE_VERSION=\\\"8.6\\\" -DPACKAGE_STRING=\\\"tcl\\ 8.6\\\" -DPACKAGE_BUGREPORT=\\\"\\\" -DPACKAGE_URL=\\\"\\\""\
 " -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_"\
 "H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_PARAM_H=1 -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DHAVE_PTHREAD_ATTR_SETSTACKSIZE=1"\
@@ -654,9 +654,9 @@ S["TCL_STUB_LIB_FILE"]="libtclstub8.6.a"
 S["TCL_LIB_SPEC"]="-L/usr/lib64 -ltcl8.6"
 S["TCL_LIB_FLAG"]="-ltcl8.6"
 S["TCL_LIB_FILE"]="libtcl8.6.so"
-S["TCL_SRC_DIR"]="/home/abuild/rpmbuild/BUILD/tcl8.6.6"
+S["TCL_SRC_DIR"]="/home/abuild/rpmbuild/BUILD/tcl8.6.7"
 S["TCL_BIN_DIR"]="/usr/lib64"
-S["TCL_PATCH_LEVEL"]=".6"
+S["TCL_PATCH_LEVEL"]=".7"
 S["TCL_VERSION"]="8.6"
 S["PKG_CFLAGS"]=" "
 S["PKG_LIBS"]=""
