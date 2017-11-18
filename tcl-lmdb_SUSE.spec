@@ -46,5 +46,5 @@ rm -rf %buildroot
 
 %files
 %defattr(-,root,root)
-%{directory}/%{_lib}/tcl
+%{tcl_archdir}
 %{directory}/share/man/mann
