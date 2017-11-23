@@ -1915,6 +1915,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
     case DB_OPEN: {
       char *zArg;
       MDB_env *env;
+      const char *env_path = NULL;
       Tcl_HashEntry *hashEntryPtr;
       char *handle = NULL;
       MDB_txn *txn;
@@ -2017,6 +2018,15 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
       }
 
       env = Tcl_GetHashValue( hashEntryPtr );
+      if (mdb_env_get_path(env, &env_path) || env_path == NULL)
+      {
+          if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "env was not open", (char *)NULL );
+          }
+          return TCL_ERROR;
+      }
+
       result = mdb_txn_begin(env, NULL, 0, &txn);
       if(result != 0) {
           if( interp ) {
