@@ -1,3 +1,12 @@
+2017-11-24  Danilo Chang  <ray2501@gmail.com>
+
+    * Setup version to v0.3.6 to test
+
+2017-11-23  Danilo Chang  <ray2501@gmail.com>
+
+    * Merge gahr's solution
+      Fix Segfault when you use an env without opening it
+
 2017-11-10  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update LMDB source code.
