@@ -1,3 +1,8 @@
+2018-06-07  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/tclmdb.c: Add cursor_handle getBinary command to test.
+      For "Use byte arrays for keys and values" request.
+
 2018-05-03  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update LMDB source code.

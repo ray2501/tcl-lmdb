@@ -1,5 +1,5 @@
 /*
- * Copyright (c) <2015-2017>, <Danilo Chang>
+ * Copyright (c) <2015-2018>, <Danilo Chang>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -88,6 +88,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
   static const char *CUR_strs[] = {
     "get",
+    "getBinary",
     "put",
     "del",
     "count",
@@ -98,6 +99,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
   enum CUR_enum {
     CUR_GET,
+    CUR_GET_BINARY,
     CUR_PUT,
     CUR_DEL,
     CUR_COUNT,
@@ -132,7 +134,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
   switch( (enum CUR_enum)choice ){
 
-    case CUR_GET: {
+    case CUR_GET:
+    case CUR_GET_BINARY: {
       char *zArg;
       char *key;
       char *data;
@@ -259,8 +262,13 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       pResultStr = Tcl_NewListObj(0, NULL);
-      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
-      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
+      if(choice==CUR_GET) {
+         Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
+         Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
+      } else if(choice==CUR_GET_BINARY) {
+        Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mkey.mv_data, mkey.mv_size));
+        Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mdata.mv_data, mdata.mv_size));
+      }
 
       Tcl_SetObjResult(interp, pResultStr);
 
