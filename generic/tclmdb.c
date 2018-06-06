@@ -259,8 +259,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       pResultStr = Tcl_NewListObj(0, NULL);
-      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
-      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mkey.mv_data, mkey.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mdata.mv_data, mdata.mv_size));
 
       Tcl_SetObjResult(interp, pResultStr);
 
