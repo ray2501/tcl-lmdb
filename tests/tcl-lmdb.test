@@ -265,7 +265,7 @@ test lmdb-2.17 {Cursor get, UTF8} {*}{
 
 test lmdb-2.18 {Cursor getBinary, UTF8} {*}{
     -body {
-        set data [lindex [dbi0.c0 getBinary -set "這是鍵"] 1]
+        set data [lindex [dbi0.c0 getBinary -last] 1]
         encoding convertfrom utf-8 $data
     }
     -result {這是值}
