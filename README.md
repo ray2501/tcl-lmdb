@@ -73,7 +73,10 @@ to create a Makefile.
 Implement commands
 =====
 
-The key and data is interpreted by Tcl as a byte array.
+The key and data is interpreted by Tcl as a string.
+
+(Or a byte array, depends on what command you use.
+And if you use byte array related command, please use it carefully.)
 
 ### Basic usage
 lmdb version ?-string?
@@ -160,6 +163,9 @@ lmdb open -env env_handle ?-name database? ?-reversekey BOOLEAN? ?-dupsort BOOLE
 dbi_handle put key data -txn txnid ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean?  
 dbi_handle get key -txn txnid  
 dbi_handle del key data -txn txnid  
+dbi_handle putBinary key data -txn txnid ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean?  
+dbi_handle getBinary key -txn txnid  
+dbi_handle delBinary key data -txn txnid  
 dbi_handle drop del_flag -txn txnid  
 dbi_handle stat -txn txnid  
 dbi_handle close -env env_handle  
@@ -237,6 +243,14 @@ cursor_handle get -next_multiple key data
 cursor_handle get -get_both key data  
 cursor_handle get -get_both_range key data  
 cursor_handle put key data ?-current boolean? ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean?  
+cursor_handle getBinary ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? ?-next? ?-nextdup? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup?  
+cursor_handle getBinary -set key  
+cursor_handle getBinary -set_range key  
+cursor_handle getBinary -get_multiple key data  
+cursor_handle getBinary -next_multiple key data  
+cursor_handle getBinary -get_both key data  
+cursor_handle getBinary -get_both_range key data  
+cursor_handle putBinary key data ?-current boolean? ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean?  
 cursor_handle del ?-nodupdata boolean?  
 cursor_handle renew -txn txnid  
 cursor_handle count  
