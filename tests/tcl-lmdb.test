@@ -248,7 +248,6 @@ test lmdb-2.15 {Cursor put, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-
 test lmdb-2.16 {Cursor put, UTF8} {*}{
     -body {
     dbi0.c0 put "這是鍵" "這是值" -append 1
@@ -263,15 +262,7 @@ test lmdb-2.17 {Cursor get, UTF8} {*}{
     -result {這是值}
 }
 
-test lmdb-2.18 {Cursor getBinary, UTF8} {*}{
-    -body {
-        set data [lindex [dbi0.c0 getBinary -last] 1]
-        encoding convertfrom utf-8 $data
-    }
-    -result {這是值}
-}
-
-test lmdb-2.19 {Cursor get, not found} {*}{
+test lmdb-2.18 {Cursor get, not found} {*}{
     -body {
         dbi0.c0 get -set "13579"
     }
@@ -280,14 +271,14 @@ test lmdb-2.19 {Cursor get, not found} {*}{
     -result {*No matching key/data pair found}
 }
 
-test lmdb-2.20 {Cursor close} {*}{
+test lmdb-2.19 {Cursor close} {*}{
     -body {
     dbi0.c0 close
     }
     -result {0}
 }
 
-test lmdb-2.21 {Delete, wrong # args} {*}{
+test lmdb-2.20 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -txn
     }
@@ -296,7 +287,7 @@ test lmdb-2.21 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.22 {Delete, wrong # args} {*}{
+test lmdb-2.21 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -test env0.txn0 -txn
     }
@@ -305,14 +296,14 @@ test lmdb-2.22 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.23 {Delete} {*}{
+test lmdb-2.22 {Delete} {*}{
     -body {
     dbi0 del "1234" "" -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.24 {Drop, wrong # args} {*}{
+test lmdb-2.23 {Drop, wrong # args} {*}{
     -body {
     dbi0 drop "mytest" -txn env0.txn0
     }
@@ -321,21 +312,21 @@ test lmdb-2.24 {Drop, wrong # args} {*}{
     -result {expected integer*}
 }
 
-test lmdb-2.25 {Drop} {*}{
+test lmdb-2.24 {Drop} {*}{
     -body {
     dbi0 drop 0 -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.26 {Commit} {*}{
+test lmdb-2.25 {Commit} {*}{
     -body {
     env0.txn0 commit
     }
     -result {0}
 }
 
-test lmdb-2.27 {UTF8} {*}{
+test lmdb-2.26 {UTF8} {*}{
     -body {
     set k {Linn‘us}
     set v {ℕ ⊆ ℕ₀ ⊂ ℤ ⊂ ℚ ⊂ ℝ ⊂ ℂ}
@@ -351,7 +342,7 @@ test lmdb-2.27 {UTF8} {*}{
     } -result 0
 }
 
-test lmdb-2.28 {Binary key and value} {*}{
+test lmdb-2.27 {Binary key and value} {*}{
     -body {
     # generate 255 random bytes
     for {set i 1} {$i < 256} {incr i} {
@@ -370,6 +361,76 @@ test lmdb-2.28 {Binary key and value} {*}{
     $mytxn close
     expr {$r eq $k && $r eq $v}
     } -result 1
+}
+
+#-------------------------------------------------------------------------------
+
+test lmdb-3.1 {PutBinary, wrong # args} {*}{
+    -body {
+        set mytxn2 [env0 txn]
+        dbi0 putBinary [encoding convertto utf-8 "這是鍵"]
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+
+test lmdb-3.2 {PutBinary} {*}{
+    -body {
+    dbi0 putBinary [encoding convertto utf-8 "這是鍵"] \
+	       [encoding convertto utf-8 "這是值"] -txn $mytxn2
+    }
+    -result {0}
+}
+
+test lmdb-3.3 {GetBinary} {*}{
+    -body {
+        set data [dbi0 getBinary [encoding convertto utf-8 "這是鍵"] -txn $mytxn2]
+        encoding convertfrom utf-8 $data
+    }
+    -result {這是值}
+}
+
+test lmdb-3.4 {DeleteBinary} {*}{
+    -body {
+    dbi0 delBinary [encoding convertto utf-8 "這是鍵"] \
+	       [encoding convertto utf-8 "這是值"] -txn $mytxn2
+    }
+    -result {0}
+}
+
+test lmdb-3.5 {Cursor} {*}{
+    -body {
+    dbi0 cursor -txn $mytxn2
+    }
+    -result {dbi0.c1}
+}
+
+
+test lmdb-3.6 {Cursor putBinary} {*}{
+    -body {
+    dbi0.c1 putBinary [encoding convertto utf-8 "這是鍵"] \
+	          [encoding convertto utf-8 "這是值"] -append 1
+    }
+    -result {0}
+}
+
+test lmdb-3.7 {Cursor getBinary} {*}{
+    -body {
+	set data [lindex [dbi0.c1 getBinary -last] 1]
+	encoding convertfrom utf-8 $data
+    }
+    -result {這是值}
+}
+
+test lmdb-3.8 {Cursor close} {*}{
+    -body {
+    dbi0.c1 close
+    $mytxn2 commit
+    $mytxn2 close
+    }
+    -result {0}
 }
 
 #-------------------------------------------------------------------------------
