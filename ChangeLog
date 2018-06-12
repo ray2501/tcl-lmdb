@@ -1,3 +1,7 @@
+2018-06-12  Danilo Chang  <ray2501@gmail.com>
+
+    * Add command to handle byte array.
+
 2018-06-07  Danilo Chang  <ray2501@gmail.com>
 
     * generic/tclmdb.c: Add cursor_handle getBinary command to test.

@@ -90,6 +90,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     "get",
     "getBinary",
     "put",
+    "putBinary",
     "del",
     "count",
     "renew",
@@ -101,6 +102,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     CUR_GET,
     CUR_GET_BINARY,
     CUR_PUT,
+    CUR_PUT_BINARY,
     CUR_DEL,
     CUR_COUNT,
     CUR_RENEW,
@@ -134,8 +136,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
   switch( (enum CUR_enum)choice ){
 
-    case CUR_GET:
-    case CUR_GET_BINARY: {
+    case CUR_GET: {
       char *zArg;
       char *key;
       char *data;
@@ -262,13 +263,147 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       pResultStr = Tcl_NewListObj(0, NULL);
-      if(choice==CUR_GET) {
-         Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
-         Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
-      } else if(choice==CUR_GET_BINARY) {
-        Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mkey.mv_data, mkey.mv_size));
-        Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mdata.mv_data, mdata.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
+
+      Tcl_SetObjResult(interp, pResultStr);
+
+      break;
+    }
+
+    /*
+     * Add command to handle byte array.
+     * Use at your own risk.
+     */
+    case CUR_GET_BINARY: {
+      char *zArg;
+      unsigned char *key;
+      unsigned char *data;
+      int len;
+      MDB_val mkey;
+      MDB_val mdata;
+      MDB_cursor_op op;
+      int need_key = 0;
+      int need_key_data = 0;
+      Tcl_Obj *pResultStr = NULL;
+
+      if( objc < 3){
+        Tcl_WrongNumArgs(interp, 2, objv,
+        "?-set? ?-set_range? ?-current? ?-first? ?-firstdup? ?-last? ?-lastdup? \
+         ?-next? ?-nextdup? ?-nextnodup? ?-prev? ?-prevdup? ?-prevnodup? \
+         ?-get_multiple? ?-next_multiple? ?-get_both? ?-get_both_range? ?key? ?data?");
+        return TCL_ERROR;
       }
+
+      zArg = Tcl_GetStringFromObj(objv[2], 0);
+      if( strcmp(zArg, "-set")==0 ){
+          op = MDB_SET;
+          need_key = 1;
+      } else if( strcmp(zArg, "-set_range")==0 ){
+          op = MDB_SET_RANGE;
+          need_key = 1;
+      } else if( strcmp(zArg, "-current")==0 ){
+          op = MDB_GET_CURRENT;
+      } else if( strcmp(zArg, "-first")==0 ){
+          op = MDB_FIRST;
+      } else if( strcmp(zArg, "-firstdup")==0 ){
+          op = MDB_FIRST_DUP;
+      } else if( strcmp(zArg, "-last")==0 ){
+          op = MDB_LAST;
+      } else if( strcmp(zArg, "-lastdup")==0 ){
+          op = MDB_LAST_DUP;
+      } else if( strcmp(zArg, "-next")==0 ){
+          op = MDB_NEXT;
+      } else if( strcmp(zArg, "-nextdup")==0 ){
+          op = MDB_NEXT_DUP;
+      } else if( strcmp(zArg, "-nextnodup")==0 ){
+          op = MDB_NEXT_NODUP;
+      } else if( strcmp(zArg, "-prev")==0 ){
+          op = MDB_PREV;
+      } else if( strcmp(zArg, "-prevdup")==0 ){
+          op = MDB_PREV_DUP ;
+      } else if( strcmp(zArg, "-prevnodup")==0 ){
+          op = MDB_PREV_NODUP;
+      } else if( strcmp(zArg, "-get_multiple")==0 ){
+          /*
+           * MDB_GET_MULTIPLE only for MDB_DUPFIXED
+           */
+
+          op = MDB_GET_MULTIPLE;
+          need_key_data = 1;
+      } else if( strcmp(zArg, "-next_multiple")==0 ){
+          op = MDB_NEXT_MULTIPLE;
+          need_key_data = 1;
+      } else if( strcmp(zArg, "-get_both")==0 ){
+          op = MDB_GET_BOTH;
+          need_key_data = 1;
+      } else if( strcmp(zArg, "-get_both_range")==0 ){
+          op = MDB_GET_BOTH_RANGE;
+          need_key_data = 1;
+      } else{
+          Tcl_AppendResult(interp, "unknown option: ", zArg, (char*)0);
+          return TCL_ERROR;
+      }
+
+      if(need_key) {
+         if( objc != 4 && objc != 5){
+           if( interp ) {
+              Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+              Tcl_AppendStringsToObj( resultObj, "Wrong option: need key", (char *)NULL );
+           }
+
+           return TCL_ERROR; // This option need a key
+         }
+
+         key = Tcl_GetByteArrayFromObj(objv[3], &len);
+         if( !key || len < 1 ){
+           return TCL_ERROR;
+         }
+
+         mkey.mv_size = len;
+         mkey.mv_data = key;
+      }
+
+      if(need_key_data) {
+         if( objc != 5 ){
+           if( interp ) {
+              Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+              Tcl_AppendStringsToObj( resultObj, "Wrong option: need key data", (char *)NULL );
+           }
+
+           return TCL_ERROR; // This option need a key and data
+         }
+
+         key = Tcl_GetByteArrayFromObj(objv[3], &len);
+         if( !key || len < 1 ){
+           return TCL_ERROR;
+         }
+
+         mkey.mv_size = len;
+         mkey.mv_data = key;
+
+         data = Tcl_GetByteArrayFromObj(objv[4], &len);
+         if( !data || len < 1 ){
+           return TCL_ERROR;
+         }
+
+         mdata.mv_size = len;
+         mdata.mv_data = data;
+      }
+
+      result = mdb_cursor_get(cursor, &mkey, &mdata, op);
+      if(result != 0) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "ERROR: ", mdb_strerror(result), (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      pResultStr = Tcl_NewListObj(0, NULL);
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mkey.mv_data, mkey.mv_size));
+      Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mdata.mv_data, mdata.mv_size));
 
       Tcl_SetObjResult(interp, pResultStr);
 
@@ -297,6 +432,106 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       data = Tcl_GetStringFromObj(objv[3], &data_len);
+      if( !data || data_len < 1 ){
+         return TCL_ERROR;
+      }
+
+      for(i=4; i+1<objc; i+=2){
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
+
+        if( strcmp(zArg, "-current")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_CURRENT;
+            }else{
+              flags &= ~MDB_CURRENT;
+            }
+        } else if( strcmp(zArg, "-nodupdata")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_NODUPDATA;
+            }else{
+              flags &= ~MDB_NODUPDATA;
+            }
+        } else if( strcmp(zArg, "-nooverwrite")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_NOOVERWRITE;
+            }else{
+              flags &= ~MDB_NOOVERWRITE;
+            }
+        } else if( strcmp(zArg, "-append")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_APPEND;
+            }else{
+              flags &= ~MDB_APPEND;
+            }
+        } else if( strcmp(zArg, "-appenddup")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_APPENDDUP;
+            }else{
+              flags &= ~MDB_APPENDDUP;
+            }
+        } else{
+           Tcl_AppendResult(interp, "unknown option: ", zArg, (char*)0);
+           return TCL_ERROR;
+        }
+      }
+
+      mkey.mv_size = key_len;
+      mkey.mv_data = key;
+
+      mdata.mv_size = data_len;
+      mdata.mv_data = data;
+
+      result = mdb_cursor_put(cursor, &mkey, &mdata, flags);
+      if(result != 0) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "ERROR: ", mdb_strerror(result), (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      Tcl_SetObjResult(interp, Tcl_NewIntObj( 0 ));
+
+      break;
+    }
+
+    /*
+     * Add command to handle byte array.
+     * Use at your own risk.
+     */
+    case CUR_PUT_BINARY: {
+      char *zArg;
+      unsigned char *key;
+      unsigned char *data;
+      int key_len;
+      int data_len;
+      MDB_val mkey;
+      MDB_val mdata;
+      int flags = 0;
+      int i = 0;
+
+      if( objc < 4 || (objc&1)!=0) {
+        Tcl_WrongNumArgs(interp, 2, objv, "key data ?-current boolean? ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean? ");
+        return TCL_ERROR;
+      }
+
+      key = Tcl_GetByteArrayFromObj(objv[2], &key_len);
+      if( !key || key_len < 1 ){
+         return TCL_ERROR;
+      }
+
+      data = Tcl_GetByteArrayFromObj(objv[3], &data_len);
       if( !data || data_len < 1 ){
          return TCL_ERROR;
       }
@@ -533,8 +768,11 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
   static const char *DBI_strs[] = {
     "put",
+    "putBinary",
     "get",
+    "getBinary",
     "del",
+    "delBinary",
     "drop",
     "close",
     "stat",
@@ -544,8 +782,11 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
   enum DBI_enum {
     DBI_PUT,
+    DBI_PUT_BINARY,
     DBI_GET,
+    DBI_GET_BINARY,
     DBI_DEL,
+    DBI_DEL_BINARY,
     DBI_DROP,
     DBI_CLOSE,
     DBI_STAT,
@@ -605,6 +846,122 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       }
 
       data = Tcl_GetStringFromObj(objv[3], &data_len);
+      if( !data || data_len < 1 ){
+        return TCL_ERROR;
+      }
+
+      for(i=4; i+1<objc; i+=2){
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
+        if( strcmp(zArg, "-txn")==0 ){
+            txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
+        } else if( strcmp(zArg, "-nodupdata")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_NODUPDATA;
+            }else{
+              flags &= ~MDB_NODUPDATA;
+            }
+        } else if( strcmp(zArg, "-nooverwrite")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_NOOVERWRITE;
+            }else{
+              flags &= ~MDB_NOOVERWRITE;
+            }
+        } else if( strcmp(zArg, "-append")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_APPEND;
+            }else{
+              flags &= ~MDB_APPEND;
+            }
+        } else if( strcmp(zArg, "-appenddup")==0 ){
+            int b;
+            if( Tcl_GetBooleanFromObj(interp, objv[i+1], &b) ) return TCL_ERROR;
+            if( b ){
+              flags |= MDB_APPENDDUP;
+            }else{
+              flags &= ~MDB_APPENDDUP;
+            }
+        } else{
+           Tcl_AppendResult(interp, "unknown option: ", zArg, (char*)0);
+           return TCL_ERROR;
+        }
+      }
+
+      if(!txnHandle) {
+        if( interp ) {
+          Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+          Tcl_AppendStringsToObj( resultObj, "invalid txn handle ", (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      txnHashEntryPtr = Tcl_FindHashEntry( tsdPtr->lmdb_hashtblPtr, txnHandle );
+      if( !txnHashEntryPtr ) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "invalid txn handle ", txnHandle, (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      txn = Tcl_GetHashValue( txnHashEntryPtr );
+
+      mkey.mv_size = key_len;
+      mkey.mv_data = key;
+      mdata.mv_size = data_len;
+      mdata.mv_data = data;
+
+      result = mdb_put (txn, dbi, &mkey, &mdata, flags);
+      if(result != 0) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "ERROR: ", mdb_strerror(result), (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      Tcl_SetObjResult(interp, Tcl_NewIntObj( 0 ));
+
+      break;
+    }
+
+    /*
+     * Add command to handle byte array.
+     * Use at your own risk.
+     */
+    case DBI_PUT_BINARY: {
+      unsigned char *key;
+      unsigned char *data;
+      int key_len;
+      int data_len;
+      MDB_val mkey;
+      MDB_val mdata;
+      const char *zArg;
+      MDB_txn *txn;
+      Tcl_HashEntry *txnHashEntryPtr;
+      char *txnHandle = NULL;
+      int flags = 0;
+      int i = 0;
+
+      if( objc < 4 || (objc&1)!=0 ){
+        Tcl_WrongNumArgs(interp, 2, objv, "key data -txn txnid ?-nodupdata boolean? ?-nooverwrite boolean? ?-append boolean? ?-appenddup boolean? ");
+        return TCL_ERROR;
+      }
+
+      key = Tcl_GetByteArrayFromObj(objv[2], &key_len);
+      if( !key || key_len < 1 ){
+        return TCL_ERROR;
+      }
+
+      data = Tcl_GetByteArrayFromObj(objv[3], &data_len);
       if( !data || data_len < 1 ){
         return TCL_ERROR;
       }
@@ -765,6 +1122,83 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       break;
     }
 
+    /*
+     * Add command to handle byte array.
+     * Use at your own risk.
+     */
+    case DBI_GET_BINARY: {
+      unsigned char *key;
+      int len;
+      MDB_val mkey;
+      MDB_val mdata;
+      const char *zArg;
+      MDB_txn *txn;
+      Tcl_HashEntry *txnHashEntryPtr;
+      char *txnHandle = NULL;
+      int i = 0;
+      Tcl_Obj *pResultStr;
+
+      if( objc != 5 ){
+        Tcl_WrongNumArgs(interp, 2, objv, "key -txn txnid ");
+        return TCL_ERROR;
+      }
+
+      key = Tcl_GetByteArrayFromObj(objv[2], &len);
+      if( !key || len < 1 ){
+        return TCL_ERROR;
+      }
+
+      for(i=3; i+1<objc; i+=2){
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
+
+        if( strcmp(zArg, "-txn")==0 ){
+            txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
+        } else{
+           Tcl_AppendResult(interp, "unknown option: ", zArg, (char*)0);
+           return TCL_ERROR;
+        }
+      }
+
+      if(!txnHandle) {
+        if( interp ) {
+          Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+          Tcl_AppendStringsToObj( resultObj, "invalid txn handle ", (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      txnHashEntryPtr = Tcl_FindHashEntry( tsdPtr->lmdb_hashtblPtr, txnHandle );
+      if( !txnHashEntryPtr ) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "invalid txn handle ", txnHandle, (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      txn = Tcl_GetHashValue( txnHashEntryPtr );
+
+      mkey.mv_size = len;
+      mkey.mv_data = key;
+
+      result = mdb_get (txn, dbi, &mkey, &mdata);
+      if(result != 0) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "ERROR: ", mdb_strerror(result), (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      pResultStr = Tcl_NewByteArrayObj( mdata.mv_data, mdata.mv_size );
+      Tcl_SetObjResult(interp, pResultStr);
+
+      break;
+    }
+
     case DBI_DEL: {
       char *key;
       char *data;
@@ -794,6 +1228,113 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
        * If user indicates data is an empty string "", don't return error.
        */
       data = Tcl_GetStringFromObj(objv[3], &data_len);
+      if( !data || data_len < 1 ){
+        //return TCL_ERROR;
+        isEmptyData = 1;
+      }
+
+      for(i=4; i+1<objc; i+=2){
+        zArg = Tcl_GetStringFromObj(objv[i], 0);
+        if( strcmp(zArg, "-txn")==0 ){
+            txnHandle = Tcl_GetStringFromObj(objv[i+1], 0);
+        } else{
+           Tcl_AppendResult(interp, "unknown option: ", zArg, (char*)0);
+           return TCL_ERROR;
+        }
+      }
+
+      if(!txnHandle) {
+        if( interp ) {
+          Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+          Tcl_AppendStringsToObj( resultObj, "invalid txn handle ", (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      txnHashEntryPtr = Tcl_FindHashEntry( tsdPtr->lmdb_hashtblPtr, txnHandle );
+      if( !txnHashEntryPtr ) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "invalid txn handle ", txnHandle, (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      txn = Tcl_GetHashValue( txnHashEntryPtr );
+
+      mkey.mv_size = key_len;
+      mkey.mv_data = key;
+
+      /*
+       * Improve this command behavior.
+       * Data is not a empty data, get it.
+       */
+      if(isEmptyData == 0) {
+        mdata.mv_size = data_len;
+        mdata.mv_data = data;
+      }
+
+      /*
+       * Improve this command behavior.
+       * If the database supports sorted duplicates and the data parameter is NULL,
+       * all of the duplicate data items for the key will be deleted.
+       * Otherwise, if the data parameter is non-NULL only the matching data item
+       * will be deleted.
+       */
+      if(isEmptyData == 0) {
+        result = mdb_del (txn, dbi, &mkey, &mdata);
+      } else {
+        result = mdb_del (txn, dbi, &mkey, NULL);
+      }
+      if(result != 0) {
+        if( interp ) {
+            Tcl_Obj *resultObj = Tcl_GetObjResult( interp );
+            Tcl_AppendStringsToObj( resultObj, "ERROR: ", mdb_strerror(result), (char *)NULL );
+        }
+
+        return TCL_ERROR;
+      }
+
+      Tcl_SetObjResult(interp, Tcl_NewIntObj( 0 ));
+
+      break;
+    }
+
+    /*
+     * Add command to handle byte array.
+     * Use at your own risk.
+     */
+    case DBI_DEL_BINARY: {
+      unsigned char *key;
+      unsigned char *data;
+      int key_len;
+      int data_len;
+      MDB_val mkey;
+      MDB_val mdata;
+      int isEmptyData = 0;
+      const char *zArg;
+      MDB_txn *txn;
+      Tcl_HashEntry *txnHashEntryPtr;
+      char *txnHandle = NULL;
+      int i = 0;
+
+      if( objc < 6 || (objc&1)!=0 ){
+        Tcl_WrongNumArgs(interp, 2, objv, "key data -txn txnid");
+        return TCL_ERROR;
+      }
+
+      key = Tcl_GetByteArrayFromObj(objv[2], &key_len);
+      if( !key || key_len < 1 ){
+        return TCL_ERROR;
+      }
+
+      /*
+       * Improve this command behavior.
+       * If user indicates data is an empty string "", don't return error.
+       */
+      data = Tcl_GetByteArrayFromObj(objv[3], &data_len);
       if( !data || data_len < 1 ){
         //return TCL_ERROR;
         isEmptyData = 1;
