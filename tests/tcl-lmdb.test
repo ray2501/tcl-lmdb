@@ -271,14 +271,23 @@ test lmdb-2.18 {Cursor getBinary, UTF8} {*}{
     -result {這是值}
 }
 
-test lmdb-2.19 {Cursor close} {*}{
+test lmdb-2.19 {Cursor get, not found} {*}{
+    -body {
+        dbi0.c0 get -set "13579"
+    }
+    -returnCodes error
+    -match glob
+    -result {*No matching key/data pair found}
+}
+
+test lmdb-2.20 {Cursor close} {*}{
     -body {
     dbi0.c0 close
     }
     -result {0}
 }
 
-test lmdb-2.20 {Delete, wrong # args} {*}{
+test lmdb-2.21 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -txn
     }
@@ -287,7 +296,7 @@ test lmdb-2.20 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.21 {Delete, wrong # args} {*}{
+test lmdb-2.22 {Delete, wrong # args} {*}{
     -body {
     dbi0 del "1234" "567890" -test env0.txn0 -txn
     }
@@ -296,14 +305,14 @@ test lmdb-2.21 {Delete, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-test lmdb-2.22 {Delete} {*}{
+test lmdb-2.23 {Delete} {*}{
     -body {
     dbi0 del "1234" "" -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.23 {Drop, wrong # args} {*}{
+test lmdb-2.24 {Drop, wrong # args} {*}{
     -body {
     dbi0 drop "mytest" -txn env0.txn0
     }
@@ -312,21 +321,21 @@ test lmdb-2.23 {Drop, wrong # args} {*}{
     -result {expected integer*}
 }
 
-test lmdb-2.24 {Drop} {*}{
+test lmdb-2.25 {Drop} {*}{
     -body {
     dbi0 drop 0 -txn env0.txn0
     }
     -result {0}
 }
 
-test lmdb-2.25 {Commit} {*}{
+test lmdb-2.26 {Commit} {*}{
     -body {
     env0.txn0 commit
     }
     -result {0}
 }
 
-test lmdb-2.26 {UTF8} {*}{
+test lmdb-2.27 {UTF8} {*}{
     -body {
     set k {Linn‘us}
     set v {ℕ ⊆ ℕ₀ ⊂ ℤ ⊂ ℚ ⊂ ℝ ⊂ ℂ}
@@ -342,7 +351,7 @@ test lmdb-2.26 {UTF8} {*}{
     } -result 0
 }
 
-test lmdb-2.27 {Binary key and value} {*}{
+test lmdb-2.28 {Binary key and value} {*}{
     -body {
     # generate 255 random bytes
     for {set i 1} {$i < 256} {incr i} {
