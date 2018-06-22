@@ -4,7 +4,7 @@
 
 Name:          tcl-lmdb
 Summary:       Tcl interface for LMDB
-Version:       0.3.6
+Version:       0.4.0
 Release:       2
 License:       BSD
 Group:         Development/Libraries/Tcl
@@ -46,5 +46,6 @@ rm -rf %buildroot
 
 %files
 %defattr(-,root,root)
+%doc README.md LICENSE.LMDB COPYRIGHT.LMDB
 %{tcl_archdir}
 %{directory}/share/man/mann
