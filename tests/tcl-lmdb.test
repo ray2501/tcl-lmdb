@@ -375,7 +375,6 @@ test lmdb-3.1 {PutBinary, wrong # args} {*}{
     -result {wrong # args*}
 }
 
-
 test lmdb-3.2 {PutBinary} {*}{
     -body {
     dbi0 putBinary [encoding convertto utf-8 "這是鍵"] \
@@ -384,7 +383,25 @@ test lmdb-3.2 {PutBinary} {*}{
     -result {0}
 }
 
-test lmdb-3.3 {GetBinary} {*}{
+test lmdb-3.3 {GetBinary, wrong # args} {*}{
+    -body {
+        dbi0 getBinary [encoding convertto utf-8 "這是鍵"] -aaa
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+test lmdb-3.4 {GetBinary, wrong # args} {*}{
+    -body {
+        dbi0 getBinary [encoding convertto utf-8 "這是鍵"] -set
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+test lmdb-3.5 {GetBinary} {*}{
     -body {
         set data [dbi0 getBinary [encoding convertto utf-8 "這是鍵"] -txn $mytxn2]
         encoding convertfrom utf-8 $data
@@ -392,7 +409,7 @@ test lmdb-3.3 {GetBinary} {*}{
     -result {這是值}
 }
 
-test lmdb-3.4 {DeleteBinary} {*}{
+test lmdb-3.6 {DeleteBinary} {*}{
     -body {
     dbi0 delBinary [encoding convertto utf-8 "這是鍵"] \
 	       [encoding convertto utf-8 "這是值"] -txn $mytxn2
@@ -400,15 +417,33 @@ test lmdb-3.4 {DeleteBinary} {*}{
     -result {0}
 }
 
-test lmdb-3.5 {Cursor} {*}{
+test lmdb-3.7 {DeleteBinary, wrong # args} {*}{
+    -body {
+    dbi0 delBinary [encoding convertto utf-8 "這是鍵"] \
+               [encoding convertto utf-8 "這是值"] -txn
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
+
+test lmdb-3.8 {Cursor} {*}{
     -body {
     dbi0 cursor -txn $mytxn2
     }
     -result {dbi0.c1}
 }
 
+test lmdb-3.9 {Cursor putBinary, wrong # args} {*}{
+    -body {
+    dbi0.c1 putBinary [encoding convertto utf-8 "這是鍵"]
+    }
+    -returnCodes error
+    -match glob
+    -result {wrong # args*}
+}
 
-test lmdb-3.6 {Cursor putBinary} {*}{
+test lmdb-3.10 {Cursor putBinary} {*}{
     -body {
     dbi0.c1 putBinary [encoding convertto utf-8 "這是鍵"] \
 	          [encoding convertto utf-8 "這是值"] -append 1
@@ -416,7 +451,7 @@ test lmdb-3.6 {Cursor putBinary} {*}{
     -result {0}
 }
 
-test lmdb-3.7 {Cursor getBinary} {*}{
+test lmdb-3.11 {Cursor getBinary} {*}{
     -body {
 	set data [lindex [dbi0.c1 getBinary -last] 1]
 	encoding convertfrom utf-8 $data
@@ -424,7 +459,14 @@ test lmdb-3.7 {Cursor getBinary} {*}{
     -result {這是值}
 }
 
-test lmdb-3.8 {Cursor close} {*}{
+test lmdb-3.12 {Cursor del} {*}{
+    -body {
+        dbi0.c1 del
+    }
+    -result {0}
+}
+
+test lmdb-3.13 {Cursor close} {*}{
     -body {
     dbi0.c1 close
     $mytxn2 commit
