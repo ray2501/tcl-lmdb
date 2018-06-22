@@ -8,7 +8,7 @@ Version:       0.3.6
 Release:       2
 License:       BSD
 Group:         Development/Libraries/Tcl
-Source:        https://sites.google.com/site/ray2501/tcl-lmdb/tcl-lmdb_0.3.6.zip
+Source:        %{name}-%{version}.tar.gz
 URL:           https://sites.google.com/site/ray2501/tcl-lmdb 
 BuildRequires: autoconf
 BuildRequires: make
@@ -29,7 +29,7 @@ This extension provides an easy to use interface for accessing LMDB
 database files from Tcl.
 
 %prep
-%setup -q -n %{name}
+%setup -q -n %{name}-%{version}
 
 %build
 CFLAGS="%optflags" ./configure \
