@@ -61,7 +61,7 @@
 typedef LONG NTSTATUS;
 #endif
 
-typedef NTSTATUS WINAPI (NtCreateSectionFunc)
+typedef NTSTATUS (WINAPI NtCreateSectionFunc)
   (OUT PHANDLE sh, IN ACCESS_MASK acc,
   IN void * oa OPTIONAL,
   IN PLARGE_INTEGER ms OPTIONAL,
@@ -74,7 +74,7 @@ typedef enum _SECTION_INHERIT {
 	ViewUnmap = 2
 } SECTION_INHERIT;
 
-typedef NTSTATUS WINAPI (NtMapViewOfSectionFunc)
+typedef NTSTATUS (WINAPI NtMapViewOfSectionFunc)
   (IN PHANDLE sh, IN HANDLE ph,
   IN OUT PVOID *addr, IN ULONG_PTR zbits,
   IN SIZE_T cs, IN OUT PLARGE_INTEGER off OPTIONAL,
@@ -83,7 +83,7 @@ typedef NTSTATUS WINAPI (NtMapViewOfSectionFunc)
 
 static NtMapViewOfSectionFunc *NtMapViewOfSection;
 
-typedef NTSTATUS WINAPI (NtCloseFunc)(HANDLE h);
+typedef NTSTATUS (WINAPI NtCloseFunc)(HANDLE h);
 
 static NtCloseFunc *NtClose;
 
@@ -3453,10 +3453,41 @@ mdb_freelist_save(MDB_txn *txn)
 		 * we may be unable to return them to me_pghead.
 		 */
 		MDB_page *mp = txn->mt_loose_pgs;
+		MDB_ID2 *dl = txn->mt_u.dirty_list;
+		unsigned x;
 		if ((rc = mdb_midl_need(&txn->mt_free_pgs, txn->mt_loose_count)) != 0)
 			return rc;
-		for (; mp; mp = NEXT_LOOSE_PAGE(mp))
+		for (; mp; mp = NEXT_LOOSE_PAGE(mp)) {
 			mdb_midl_xappend(txn->mt_free_pgs, mp->mp_pgno);
+			/* must also remove from dirty list */
+			if (txn->mt_flags & MDB_TXN_WRITEMAP) {
+				for (x=1; x<=dl[0].mid; x++)
+					if (dl[x].mid == mp->mp_pgno)
+						break;
+				mdb_tassert(txn, x <= dl[0].mid);
+			} else {
+				x = mdb_mid2l_search(dl, mp->mp_pgno);
+				mdb_tassert(txn, dl[x].mid == mp->mp_pgno);
+			}
+			dl[x].mptr = NULL;
+			mdb_dpage_free(env, mp);
+		}
+		{
+			/* squash freed slots out of the dirty list */
+			unsigned y;
+			for (y=1; dl[y].mptr && y <= dl[0].mid; y++);
+			if (y <= dl[0].mid) {
+				for(x=y, y++;;) {
+					while (!dl[y].mptr && y <= dl[0].mid) y++;
+					if (y > dl[0].mid) break;
+					dl[x++] = dl[y++];
+				}
+				dl[0].mid = x-1;
+			} else {
+				/* all slots freed */
+				dl[0].mid = 0;
+			}
+		}
 		txn->mt_loose_pgs = NULL;
 		txn->mt_loose_count = 0;
 	}
