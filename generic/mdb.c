@@ -5,7 +5,7 @@
  *	BerkeleyDB API, but much simplified.
  */
 /*
- * Copyright 2011-2018 Howard Chu, Symas Corp.
+ * Copyright 2011-2019 Howard Chu, Symas Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,15 +52,6 @@
  * NTDLL.DLL at runtime, to avoid buildtime dependencies on any
  * NTDLL import libraries.
  */
-
-/*
- * #ITS 8338 Workaround for build fail in MinGW/MSYS
- * 
- */
-#if !defined (_NTDEF_) && !defined (_NTDEF_H)
-typedef LONG NTSTATUS;
-#endif
-
 typedef NTSTATUS (WINAPI NtCreateSectionFunc)
   (OUT PHANDLE sh, IN ACCESS_MASK acc,
   IN void * oa OPTIONAL,

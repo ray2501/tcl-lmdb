@@ -1,5 +1,5 @@
 /*
- * Copyright (c) <2015-2018>, <Danilo Chang>
+ * Copyright (c) <2015-2019>, <Danilo Chang>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
