@@ -52,6 +52,15 @@
  * NTDLL.DLL at runtime, to avoid buildtime dependencies on any
  * NTDLL import libraries.
  */
+
+/*
+ * #ITS 8338 Workaround for build fail in MinGW/MSYS
+ *
+ */
+#if !defined (_NTDEF_) && !defined (_NTDEF_H)
+typedef LONG NTSTATUS;
+#endif
+
 typedef NTSTATUS (WINAPI NtCreateSectionFunc)
   (OUT PHANDLE sh, IN ACCESS_MASK acc,
   IN void * oa OPTIONAL,
