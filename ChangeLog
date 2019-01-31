@@ -1,3 +1,8 @@
+2019-02-01  Danilo Chang  <ray2501@gmail.com>
+
+    * Makefile.in: Remove workaround for glibc.
+      It is not necessary for current LMDB source code.
+
 2019-01-31  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Update LMDB source code.

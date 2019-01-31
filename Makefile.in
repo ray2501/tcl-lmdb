@@ -149,17 +149,6 @@ INCLUDES	= @PKG_INCLUDES@ @TCL_INCLUDES@
 
 PKG_CFLAGS	= @PKG_CFLAGS@
 
-# Workaround for glibc pthread robust mutex support (glibc < 2.12) fix
-ifneq ("$(OS)","Windows_NT")
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Linux)
-GLIBCCHECK := $(shell expr `ldd --version | grep ^ldd | sed 's/^.* //g'` \< 2.12)
-ifeq "$(GLIBCCHECK)" "1"
-        PKG_CFLAGS += -DMDB_USE_ROBUST=0
-endif
-endif
-endif
-
 # TCL_DEFS is not strictly need here, but if you remove it, then you
 # must make sure that configure.ac checks for the necessary components
 # that your library may use.  TCL_DEFS can actually be a problem if
