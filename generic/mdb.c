@@ -5,7 +5,7 @@
  *	BerkeleyDB API, but much simplified.
  */
 /*
- * Copyright 2011-2020 Howard Chu, Symas Corp.
+ * Copyright 2011-2021 Howard Chu, Symas Corp.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9553,10 +9553,10 @@ mdb_cursor_del0(MDB_cursor *mc)
 					}
 					m3->mc_xcursor->mx_cursor.mc_flags |= C_DEL;
 				}
-				m3->mc_flags |= C_DEL;
 			}
 		}
 	}
+	m3->mc_flags |= C_DEL;
 
 fail:
 	if (rc)
