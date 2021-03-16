@@ -1,3 +1,7 @@
+2021-03-16  Danilo Chang  <ray2501@gmail.com>
+
+    * generic/mdb.c: Update LMDB source code.
+
 2021-02-27  Danilo Chang  <ray2501@gmail.com>
 
     * generic/mdb.c: Fix typo.
