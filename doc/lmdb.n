@@ -22,4 +22,4 @@ memory map, requiring no page cache layer of its own.
 This extension provides an easy to use interface for accessing LMDB 
 database files from Tcl. 
 .PP
-For full documentation see \fIhttp://symas.com/mdb/\fR.
+For full documentation see \fIhttps://www.symas.com/symas-embedded-database-lmdb\fR.

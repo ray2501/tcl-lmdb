@@ -14,7 +14,7 @@ no page cache layer of its own.
 
 For additional information on LMDB see
 
-[https://symas.com/products/lightning-memory-mapped-database/](https://symas.com/products/lightning-memory-mapped-database/) 
+[https://www.symas.com/symas-embedded-database-lmdb](https://www.symas.com/symas-embedded-database-lmdb)
 
 
 License
