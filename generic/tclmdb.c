@@ -262,7 +262,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      pResultStr = Tcl_NewListObj(0, NULL);
+      pResultStr = Tcl_NewListObj(2, NULL);
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mkey.mv_data, mkey.mv_size));
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewStringObj(mdata.mv_data, mdata.mv_size));
 
@@ -401,7 +401,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      pResultStr = Tcl_NewListObj(0, NULL);
+      pResultStr = Tcl_NewListObj(2, NULL);
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mkey.mv_data, mkey.mv_size));
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewByteArrayObj(mdata.mv_data, mdata.mv_size));
 
@@ -1585,7 +1585,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      pResultStr = Tcl_NewListObj(0, NULL);
+      pResultStr = Tcl_NewListObj(6, NULL);
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(stat.ms_psize));
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(stat.ms_depth));
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(stat.ms_branch_pages));
@@ -2138,7 +2138,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
         return TCL_ERROR;
       }
 
-      pResultStr = Tcl_NewListObj(0, NULL);
+      pResultStr = Tcl_NewListObj(6, NULL);
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(stat.ms_psize));
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(stat.ms_depth));
       Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(stat.ms_branch_pages));
@@ -2659,7 +2659,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
       if(bReturnString) {
           pResultStr = Tcl_NewStringObj(verString, -1);
       } else {
-          pResultStr = Tcl_NewListObj(0, NULL);
+          pResultStr = Tcl_NewListObj(3, NULL);
           Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(major));
           Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(minor));
           Tcl_ListObjAppendElement(interp, pResultStr, Tcl_NewIntObj(patch));
