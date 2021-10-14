@@ -1,5 +1,6 @@
 2021-10-14  Danilo Chang  <ray2501@gmail.com>
 
+    * Setup version to v0.4.2 (checkpoint version)
     * generic/tclmdb.c: Improve code to create list
 
 2021-04-10  Danilo Chang  <ray2501@gmail.com>
