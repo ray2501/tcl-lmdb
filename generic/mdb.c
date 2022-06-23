@@ -5643,10 +5643,11 @@ mdb_env_open(MDB_env *env, const char *path, unsigned int flags, mdb_mode_t mode
 		/* Synchronous fd for meta writes. Needed even with
 		 * MDB_NOSYNC/MDB_NOMETASYNC, in case these get reset.
 		 */
-		rc = mdb_fopen(env, &fname, MDB_O_META, mode, &env->me_mfd);
-		if (rc)
-			goto leave;
-
+		if (!(flags & (MDB_RDONLY|MDB_WRITEMAP))) {
+			rc = mdb_fopen(env, &fname, MDB_O_META, mode, &env->me_mfd);
+			if (rc)
+				goto leave;
+		}
 		DPRINTF(("opened dbenv %p", (void *) env));
 		if (excl > 0 && !(flags & MDB_PREVSNAPSHOT)) {
 			rc = mdb_env_share_locks(env, &excl);
@@ -7498,6 +7499,7 @@ fetchm:
 			rc = MDB_NOTFOUND;
 			break;
 		}
+		mc->mc_flags &= ~C_EOF;
 		{
 			MDB_node *leaf = NODEPTR(mc->mc_pg[mc->mc_top], mc->mc_ki[mc->mc_top]);
 			if (!F_ISSET(leaf->mn_flags, F_DUPDATA)) {
