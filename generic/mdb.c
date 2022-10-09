@@ -123,8 +123,7 @@ static NtCloseFunc *NtClose;
 
 #if defined(__mips) && defined(__linux)
 /* MIPS has cache coherency issues, requires explicit cache control */
-#include <asm/cachectl.h>
-extern int cacheflush(char *addr, int nbytes, int cache);
+#include <sys/cachectl.h>
 #define CACHEFLUSH(addr, bytes, cache)	cacheflush(addr, bytes, cache)
 #else
 #define CACHEFLUSH(addr, bytes, cache)
@@ -258,15 +257,21 @@ union semun {
 # error "Two's complement, reasonably sized integer types, please"
 #endif
 
-#ifdef __GNUC__
-/** Put infrequently used env functions in separate section */
-# ifdef __APPLE__
-#  define	ESECT	__attribute__ ((section("__TEXT,text_env")))
-# else
-#  define	ESECT	__attribute__ ((section("text_env")))
-# endif
+#if (((__clang_major__ << 8) | __clang_minor__) >= 0x0302) || (((__GNUC__ << 8) | __GNUC_MINOR__) >= 0x0403)
+/** Mark infrequently used env functions as cold. This puts them in a separate
+ *  section, and optimizes them for size */
+#define ESECT __attribute__ ((cold))
 #else
-#define ESECT
+/* On older compilers, use a separate section */
+# ifdef __GNUC__
+#  ifdef __APPLE__
+#   define      ESECT   __attribute__ ((section("__TEXT,text_env")))
+#  else
+#   define      ESECT   __attribute__ ((section("text_env")))
+#  endif
+# else
+#  define ESECT
+# endif
 #endif
 
 #ifdef _WIN32
