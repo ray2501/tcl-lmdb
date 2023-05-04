@@ -9,7 +9,7 @@ Release:       2
 License:       BSD-2-Clause
 Group:         Development/Libraries/Tcl
 Source:        %{name}-%{version}.tar.gz
-URL:           https://sites.google.com/site/ray2501/tcl-lmdb 
+URL:           https://github.com/ray2501/tcl-lmdb
 BuildRequires: autoconf
 BuildRequires: make
 BuildRequires: tcl-devel >= 8.1
