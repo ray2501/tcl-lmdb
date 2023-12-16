@@ -149,10 +149,10 @@ file names.
 
 [para]
 Here is an excerpt of the directory that holds the extension itself (we
-used Tcl8.4 for this):
+used Tcl8.6 for this):
 [example {
    lib/
-      tcl8.4/
+      tcl8.6/
          msgcat1.3/
             msgcat.tcl
             pkgIndex.tcl
@@ -168,7 +168,7 @@ various versions of a package around.
 
 [para]
 In Tcllib, such a collection of files is found more commonly
-together, like for the CRC module (an excerpt from the CVS repository):
+together, like for the CRC module:
 [example {
    tcllib/
       modules/
@@ -185,15 +185,6 @@ together, like for the CRC module (an excerpt from the CVS repository):
 There is no "pkgIndex.tcl" script, as this is created by the
 installation procedure for Tcllib as a whole.
 
-[para]
-[emph Note:]
-[para]
-If you are not familiar with CVS, it is a widely used source code
-control system. CVS is short for "concurrent version system". Such
-systems help automate the tedious task of keeping track of changes in
-the source code, documentation and other things over time. This is
-important, because this way you can see if a bug has actually been
-solved and when, for instance.
 
 
 [section {Extensions that are platform-independent}]
@@ -309,18 +300,14 @@ for such a function:
    {
        /* Initialise the stubs library - see chapter 5
        */
-       if (Tcl_InitStubs(interp, "8.0", 0) == NULL) {
+       if (Tcl_InitStubs(interp, "8.6-", 0) == NULL) {
            return TCL_ERROR;
        }
 
        /* Require some version of Tcl, at least 8.0
        */
        if (Tcl_PkgRequire(interp, "Tcl", TCL_VERSION, 0) == NULL) {
-           if (TCL_VERSION[0] == '7') {
-               if (Tcl_PkgRequire(interp, "Tcl", "8.0", 0) == NULL) {
-                   return TCL_ERROR;
-               }
-           }
+           return TCL_ERROR;
        }
 
        /* Make the package known
@@ -333,8 +320,7 @@ for such a function:
           Tcl command "cmd1" is implemented by the function Cmd1,
           etc.
        */
-       Tcl_CreateObjCommand(interp, "cmd1", Cmd1,
-               (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+       Tcl_CreateObjCommand(interp, "cmd1", Cmd1, NULL, NULL);
        ... other commands ...
 
        return TCL_OK;
@@ -376,7 +362,7 @@ extension:
 
 [example {
    /*
-    * exampleA.h --
+    * examplea.h --
     *
     *      This header file contains the function declarations needed for
     *      all of the source files in this package.
@@ -394,14 +380,13 @@ extension:
    #include <tcl.h>
 
    /*
-    * Windows needs to know which symbols to export.  Unix does not.
-    * BUILD_exampleA should be undefined for Unix.
+    * Windows needs to know which symbols to export.
     */
 
-   #ifdef BUILD_exampleA
+   #ifdef BUILD_examplea
    #undef TCL_STORAGE_CLASS
    #define TCL_STORAGE_CLASS DLLEXPORT
-   #endif /* BUILD_exampleA */
+   #endif /* BUILD_examplea */
 
    typedef struct {
        unsigned long state[5];
@@ -409,16 +394,16 @@ extension:
        unsigned char buffer[64];
    } SHA1_CTX;
 
-   void SHA1Init   _ANSI_ARGS_((SHA1_CTX* context));
-   void SHA1Update _ANSI_ARGS_((SHA1_CTX* context, unsigned char* data,
-                    unsigned int len));
-   void SHA1Final  _ANSI_ARGS_((SHA1_CTX* context, unsigned char digest[20]));
+   void SHA1Init   (SHA1_CTX* context);
+   void SHA1Update (SHA1_CTX* context, unsigned char* data,
+                    size_t len);
+   void SHA1Final  (SHA1_CTX* context, unsigned char digest[20]);
 
    /*
     * Only the _Init function is exported.
     */
 
-   EXTERN int      Examplea_Init _ANSI_ARGS_((Tcl_Interp * interp));
+   EXTERN int      Examplea_Init (Tcl_Interp * interp);
 
    #endif /* _EXAMPLEA */
 }]
@@ -441,7 +426,7 @@ It includes the public Tcl header for access to the Tcl API,
 
 [bullet]
 There is a piece of magic involving Windows builds: the macro
-BUILD_exampleA controls this. This is a macro that is defined via the
+BUILD_examplea controls this. This is a macro that is defined via the
 [emph configure] file - more about this in Chapter 7. Note: this is
 boiler-plate stuff, only the name of the macro needs to be adjusted.
 
@@ -453,9 +438,7 @@ Most of what follows is specific to the extension:
 The definition of the structure that this extension uses
 [bullet]
 The prototypes for the public functions in the SHA1 library
-(the example extension is a wrapper for that library), but do
-note the use of the macro [emph ANSI_ARGS] - some systems still do
-not conform to the ANSI/ISO C standard
+(the example extension is a wrapper for that library)
 [bullet]
 The last few lines concern the initialisation procedure, here
 again some magic, controlled by the EXTERN macro.
@@ -470,9 +453,9 @@ If the extension provides its own [emph {stubs library}], then:
 add the following code fragments to the header file for your extension:
 
 [example {
-     EXTERN CONST char * Examplea_InitStubs
-                            _ANSI_ARGS_((Tcl_Interp *interp,
-                            CONST char *version, int exact));
+     EXTERN const char * Examplea_InitStubs
+                            (Tcl_Interp *interp,
+                            const char *version, int exact);
 
      #ifndef USE_TCL_STUBS
 
@@ -481,7 +464,7 @@ add the following code fragments to the header file for your extension:
       */
 
      #define Examplea_InitStubs(interp, version, exact) \\
-        Tcl_PkgRequire(interp, "ExampleA", version, exact)
+        Tcl_PkgRequire(interp, "examplea", version, exact)
 
      #endif /* USE_TCL_STUBS */
 

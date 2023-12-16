@@ -58,6 +58,8 @@ PKG_HEADERS	=
 #========================================================================
 
 PKG_LIB_FILE	= liblmdb0.4.2.so
+PKG_LIB_FILE8	= liblmdb0.4.2.so
+PKG_LIB_FILE9	= libtcl9lmdb0.4.2.so
 PKG_STUB_LIB_FILE = liblmdbstub0.4.2.a
 
 lib_BINARIES	= $(PKG_LIB_FILE)
@@ -73,6 +75,7 @@ bindir		= ${exec_prefix}/bin
 libdir		= ${exec_prefix}/lib64
 includedir	= ${prefix}/include
 datarootdir	= ${prefix}/share
+runstatedir	= ${localstatedir}/run
 datadir		= ${datarootdir}
 mandir		= ${datarootdir}/man
 
@@ -83,42 +86,41 @@ pkgdatadir	= $(datadir)/$(PKG_DIR)
 pkglibdir	= $(libdir)/$(PKG_DIR)
 pkgincludedir	= $(includedir)/$(PKG_DIR)
 
-top_builddir	= .
+top_builddir	= /home/danilo/Public/tcl-lmdb
 
 INSTALL_OPTIONS	=
-INSTALL		= $(SHELL) $(srcdir)/tclconfig/install-sh -c ${INSTALL_OPTIONS}
+INSTALL		= $(SHELL) $(srcdir)/tclconfig/install-sh -c $(INSTALL_OPTIONS)
 INSTALL_DATA_DIR = ${INSTALL} -d -m 755
 INSTALL_DATA	= ${INSTALL} -m 644
-INSTALL_PROGRAM	= ${INSTALL}
-INSTALL_SCRIPT	= ${INSTALL}
-INSTALL_LIBRARY	= ${INSTALL_DATA}
+INSTALL_PROGRAM	= ${INSTALL} -m 755
+INSTALL_SCRIPT	= ${INSTALL} -m 755
+INSTALL_LIBRARY	= ${INSTALL} -m 644
 
 PACKAGE_NAME	= lmdb
 PACKAGE_VERSION	= 0.4.2
 CC		= gcc
+CCLD		= @CCLD@
 CFLAGS_DEFAULT	= -O2 -fomit-frame-pointer -DNDEBUG
 CFLAGS_WARNING	= -Wall
 EXEEXT		= 
-LDFLAGS_DEFAULT	=  -Wl,--export-dynamic 
-MAKE_LIB	= ${SHLIB_LD} -o $@ $(PKG_OBJECTS) ${SHLIB_LD_LIBS} 
-MAKE_SHARED_LIB	= ${SHLIB_LD} -o $@ $(PKG_OBJECTS) ${SHLIB_LD_LIBS}
-MAKE_STATIC_LIB	= ${STLIB_LD} $@ $(PKG_OBJECTS)
+LDFLAGS_DEFAULT	= 
+MAKE_LIB	= ${SHLIB_LD} ${LDFLAGS} ${LDFLAGS_DEFAULT} -o $@ $(PKG_OBJECTS) ${SHLIB_LD_LIBS} 
 MAKE_STUB_LIB	= ${STLIB_LD} $@ $(PKG_STUB_OBJECTS)
 OBJEXT		= o
 RANLIB		= :
 RANLIB_STUB	= ranlib
 SHLIB_CFLAGS	= -fPIC
-SHLIB_LD	= ${CC} -shared ${CFLAGS} ${LDFLAGS_DEFAULT}
+SHLIB_LD	= ${CC} ${CFLAGS} ${LDFLAGS_DEFAULT} -shared
 SHLIB_LD_LIBS	= ${LIBS} -L/usr/lib64 -ltclstub8.6
 STLIB_LD	= ${AR} cr
-#TCL_DEFS	= -DPACKAGE_NAME=\"tcl\" -DPACKAGE_TARNAME=\"tcl\" -DPACKAGE_VERSION=\"8.6\" -DPACKAGE_STRING=\"tcl\ 8.6\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_PARAM_H=1 -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DHAVE_PTHREAD_ATTR_SETSTACKSIZE=1 -DHAVE_PTHREAD_ATFORK=1 -DTCL_THREADS=1 -DTCL_CFGVAL_ENCODING=\"iso8859-1\" -DHAVE_ZLIB=1 -DMODULE_SCOPE=extern\ __attribute__\(\(__visibility__\(\"hidden\"\)\)\) -DHAVE_HIDDEN=1 -DHAVE_CAST_TO_UNION=1 -DTCL_SHLIB_EXT=\".so\" -DNDEBUG=1 -DTCL_CFG_OPTIMIZED=1 -DTCL_TOMMATH=1 -DMP_PREC=4 -D_LARGEFILE64_SOURCE=1 -DTCL_WIDE_INT_IS_LONG=1 -DHAVE_GETCWD=1 -DHAVE_MKSTEMP=1 -DHAVE_OPENDIR=1 -DHAVE_STRTOL=1 -DHAVE_WAITPID=1 -DHAVE_GETNAMEINFO=1 -DHAVE_GETADDRINFO=1 -DHAVE_FREEADDRINFO=1 -DHAVE_GAI_STRERROR=1 -DHAVE_STRUCT_ADDRINFO=1 -DHAVE_STRUCT_IN6_ADDR=1 -DHAVE_STRUCT_SOCKADDR_IN6=1 -DHAVE_STRUCT_SOCKADDR_STORAGE=1 -DHAVE_GETPWUID_R_5=1 -DHAVE_GETPWUID_R=1 -DHAVE_GETPWNAM_R_5=1 -DHAVE_GETPWNAM_R=1 -DHAVE_GETGRGID_R_5=1 -DHAVE_GETGRGID_R=1 -DHAVE_GETGRNAM_R_5=1 -DHAVE_GETGRNAM_R=1 -DHAVE_DECL_GETHOSTBYNAME_R=1 -DHAVE_GETHOSTBYNAME_R_6=1 -DHAVE_GETHOSTBYNAME_R=1 -DHAVE_DECL_GETHOSTBYADDR_R=1 -DHAVE_GETHOSTBYADDR_R_8=1 -DHAVE_GETHOSTBYADDR_R=1 -DHAVE_TERMIOS_H=1 -DHAVE_SYS_IOCTL_H=1 -DHAVE_SYS_TIME_H=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_GMTIME_R=1 -DHAVE_LOCALTIME_R=1 -DHAVE_MKTIME=1 -DHAVE_TM_GMTOFF=1 -DHAVE_TIMEZONE_VAR=1 -DHAVE_STRUCT_STAT_ST_BLOCKS=1 -DHAVE_STRUCT_STAT_ST_BLKSIZE=1 -DHAVE_BLKCNT_T=1 -DHAVE_INTPTR_T=1 -DHAVE_UINTPTR_T=1 -DNO_UNION_WAIT=1 -DHAVE_SIGNED_CHAR=1 -DHAVE_LANGINFO=1 -DHAVE_MKSTEMPS=1 -DHAVE_FTS=1 -DHAVE_SYS_IOCTL_H=1 -DTCL_UNLOAD_DLLS=1 -DHAVE_CPUID=1
+#TCL_DEFS	= -DPACKAGE_NAME=\"tcl\" -DPACKAGE_TARNAME=\"tcl\" -DPACKAGE_VERSION=\"8.6\" -DPACKAGE_STRING=\"tcl\ 8.6\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_TIME_H=1 -DSTDC_HEADERS=1 -DHAVE_SYS_PARAM_H=1 -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DHAVE_PTHREAD_ATTR_SETSTACKSIZE=1 -DHAVE_PTHREAD_ATFORK=1 -DTCL_THREADS=1 -DTCL_CFGVAL_ENCODING=\"iso8859-1\" -DHAVE_ZLIB=1 -DMODULE_SCOPE=extern\ __attribute__\(\(__visibility__\(\"hidden\"\)\)\) -DHAVE_HIDDEN=1 -DHAVE_CAST_TO_UNION=1 -DTCL_SHLIB_EXT=\".so\" -DNDEBUG=1 -DTCL_CFG_OPTIMIZED=1 -DTCL_TOMMATH=1 -DMP_PREC=4 -D_LARGEFILE64_SOURCE=1 -DTCL_WIDE_INT_IS_LONG=1 -DHAVE_GETCWD=1 -DHAVE_MKSTEMP=1 -DHAVE_OPENDIR=1 -DHAVE_STRTOL=1 -DHAVE_WAITPID=1 -DHAVE_GETNAMEINFO=1 -DHAVE_GETADDRINFO=1 -DHAVE_FREEADDRINFO=1 -DHAVE_GAI_STRERROR=1 -DHAVE_STRUCT_ADDRINFO=1 -DHAVE_STRUCT_IN6_ADDR=1 -DHAVE_STRUCT_SOCKADDR_IN6=1 -DHAVE_STRUCT_SOCKADDR_STORAGE=1 -DHAVE_GETPWUID_R_5=1 -DHAVE_GETPWUID_R=1 -DHAVE_GETPWNAM_R_5=1 -DHAVE_GETPWNAM_R=1 -DHAVE_GETGRGID_R_5=1 -DHAVE_GETGRGID_R=1 -DHAVE_GETGRNAM_R_5=1 -DHAVE_GETGRNAM_R=1 -DHAVE_DECL_GETHOSTBYNAME_R=1 -DHAVE_GETHOSTBYNAME_R_6=1 -DHAVE_GETHOSTBYNAME_R=1 -DHAVE_DECL_GETHOSTBYADDR_R=1 -DHAVE_GETHOSTBYADDR_R_8=1 -DHAVE_GETHOSTBYADDR_R=1 -DHAVE_TERMIOS_H=1 -DHAVE_SYS_IOCTL_H=1 -DHAVE_SYS_TIME_H=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_GMTIME_R=1 -DHAVE_LOCALTIME_R=1 -DHAVE_MKTIME=1 -DHAVE_TM_GMTOFF=1 -DHAVE_TIMEZONE_VAR=1 -DHAVE_STRUCT_STAT_ST_BLOCKS=1 -DHAVE_STRUCT_STAT_ST_BLKSIZE=1 -DHAVE_BLKCNT_T=1 -DHAVE_INTPTR_T=1 -DHAVE_UINTPTR_T=1 -DNO_UNION_WAIT=1 -DHAVE_SIGNED_CHAR=1 -DHAVE_LANGINFO=1 -DHAVE_MKSTEMPS=1 -DHAVE_FTS=1 -DHAVE_SYS_IOCTL_H=1 -DTCL_UNLOAD_DLLS=1 -DHAVE_CPUID=1
 TCL_BIN_DIR	= /usr/lib64
-TCL_SRC_DIR	= /home/abuild/rpmbuild/BUILD/tcl8.6.12
+TCL_SRC_DIR	= /home/abuild/rpmbuild/BUILD/tcl8.6.13
 #TK_BIN_DIR	= @TK_BIN_DIR@
 #TK_SRC_DIR	= @TK_SRC_DIR@
 
 # Not used, but retained for reference of what libs Tcl required
-#TCL_LIBS	= ${DL_LIBS} ${LIBS} ${MATH_LIBS}
+#TCL_LIBS	= 
 
 #========================================================================
 # TCLLIBPATH seeds the auto_path in Tcl's init.tcl so we can test our
@@ -136,15 +138,15 @@ PKG_ENV		= LD_LIBRARY_PATH="$(EXTRA_PATH):$(LD_LIBRARY_PATH)" \
 		  TCLLIBPATH="$(TCLLIBPATH)"
 
 TCLSH_PROG	= /usr/bin/tclsh8.6
-TCLSH		= $(PKG_ENV) $(TCLSH_ENV) $(TCLSH_PROG)
+TCLSH		= $(TCLSH_ENV) $(PKG_ENV) $(TCLSH_PROG)
 
 #WISH_ENV	= TK_LIBRARY=`echo $(TK_SRC_DIR)/library`
 #WISH_PROG	= @WISH_PROG@
-#WISH		= $(PKG_ENV) $(TCLSH_ENV) $(WISH_ENV) $(WISH_PROG)
+#WISH		= $(TCLSH_ENV) $(WISH_ENV) $(PKG_ENV) $(WISH_PROG)
 
 SHARED_BUILD	= 1
 
-INCLUDES	=  -I"/usr/include"
+INCLUDES	=  -I"/usr/include" -I.
 #INCLUDES	=  -I"/usr/include" @TK_INCLUDES@ @TK_XINCLUDES@
 
 PKG_CFLAGS	=  
@@ -154,8 +156,8 @@ PKG_CFLAGS	=
 # that your library may use.  TCL_DEFS can actually be a problem if
 # you do not compile with a similar machine setup as the Tcl core was
 # compiled with.
-#DEFS		= $(TCL_DEFS) -DPACKAGE_NAME=\"lmdb\" -DPACKAGE_TARNAME=\"lmdb\" -DPACKAGE_VERSION=\"0.4.2\" -DPACKAGE_STRING=\"lmdb\ 0.4.2\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DBUILD_lmdb=/\*\*/ -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_LIMITS_H=1 -DHAVE_SYS_PARAM_H=1 -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DTCL_THREADS=1 -DUSE_TCL_STUBS=1 -DUSE_TCLOO_STUBS=1 -DMODULE_SCOPE=extern\ __attribute__\(\(__visibility__\(\"hidden\"\)\)\) -DHAVE_HIDDEN=1 -DHAVE_CAST_TO_UNION=1 -D_LARGEFILE64_SOURCE=1 -DTCL_WIDE_INT_IS_LONG=1 $(PKG_CFLAGS)
-DEFS		= -DPACKAGE_NAME=\"lmdb\" -DPACKAGE_TARNAME=\"lmdb\" -DPACKAGE_VERSION=\"0.4.2\" -DPACKAGE_STRING=\"lmdb\ 0.4.2\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DBUILD_lmdb=/\*\*/ -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_LIMITS_H=1 -DHAVE_SYS_PARAM_H=1 -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DTCL_THREADS=1 -DUSE_TCL_STUBS=1 -DUSE_TCLOO_STUBS=1 -DMODULE_SCOPE=extern\ __attribute__\(\(__visibility__\(\"hidden\"\)\)\) -DHAVE_HIDDEN=1 -DHAVE_CAST_TO_UNION=1 -D_LARGEFILE64_SOURCE=1 -DTCL_WIDE_INT_IS_LONG=1 $(PKG_CFLAGS)
+#DEFS		= $(TCL_DEFS) -DPACKAGE_NAME=\"lmdb\" -DPACKAGE_TARNAME=\"lmdb\" -DPACKAGE_VERSION=\"0.4.2\" -DPACKAGE_STRING=\"lmdb\ 0.4.2\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DBUILD_lmdb=/\*\*/ -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DTcl_Size=int -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DTCL_THREADS=1 -DUSE_TCL_STUBS=1 -DUSE_TCLOO_STUBS=1 -DMODULE_SCOPE=extern\ __attribute__\(\(__visibility__\(\"hidden\"\)\)\) -DHAVE_HIDDEN=1 -DHAVE_CAST_TO_UNION=1 -DHAVE_STDBOOL_H=1 -DTCL_WIDE_INT_IS_LONG=1 -DTCL_CFG_OPTIMIZED=1 -DTCL_MAJOR_VERSION=8 $(PKG_CFLAGS)
+DEFS		= -DPACKAGE_NAME=\"lmdb\" -DPACKAGE_TARNAME=\"lmdb\" -DPACKAGE_VERSION=\"0.4.2\" -DPACKAGE_STRING=\"lmdb\ 0.4.2\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DBUILD_lmdb=/\*\*/ -DHAVE_STDIO_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_STRINGS_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DTcl_Size=int -DUSE_THREAD_ALLOC=1 -D_REENTRANT=1 -D_THREAD_SAFE=1 -DTCL_THREADS=1 -DUSE_TCL_STUBS=1 -DUSE_TCLOO_STUBS=1 -DMODULE_SCOPE=extern\ __attribute__\(\(__visibility__\(\"hidden\"\)\)\) -DHAVE_HIDDEN=1 -DHAVE_CAST_TO_UNION=1 -DHAVE_STDBOOL_H=1 -DTCL_WIDE_INT_IS_LONG=1 -DTCL_CFG_OPTIMIZED=1 -DTCL_MAJOR_VERSION=8 $(PKG_CFLAGS)
 
 # Move pkgIndex.tcl to 'BINARIES' var if it is generated in the Makefile
 CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl
@@ -165,7 +167,15 @@ CPPFLAGS	=
 LIBS		=  
 AR		= ar
 CFLAGS		=  -pipe ${CFLAGS_DEFAULT} ${CFLAGS_WARNING} ${SHLIB_CFLAGS} 
-COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LDFLAGS		=  -Wl,--export-dynamic 
+LDFLAGS_DEFAULT			= 
+COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) \
+			  $(CFLAGS_DEFAULT) $(CFLAGS_WARNING) $(SHLIB_CFLAGS) $(CFLAGS)
+
+GDB		= gdb
+VALGRIND	= valgrind
+VALGRINDARGS	= --tool=memcheck --num-callers=8 --leak-resolution=high \
+		  --leak-check=yes --show-reachable=yes -v
 
 .SUFFIXES: .c .$(OBJEXT)
 
@@ -201,6 +211,10 @@ libraries:
 #========================================================================
 
 doc:
+	@echo "If you have documentation to create, place the commands to"
+	@echo "build the docs in the 'doc:' target.  For example:"
+	@echo "        xml2nroff sample.xml > sample.n"
+	@echo "        xml2html sample.xml > sample.html"
 
 install: all install-binaries install-libraries install-doc
 
@@ -212,11 +226,11 @@ install-binaries: binaries install-lib-binaries install-bin-binaries
 #========================================================================
 
 install-libraries: libraries
-	@$(INSTALL_DATA_DIR) $(DESTDIR)$(includedir)
+	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(includedir)"
 	@echo "Installing header files in $(DESTDIR)$(includedir)"
 	@list='$(PKG_HEADERS)'; for i in $$list; do \
 	    echo "Installing $(srcdir)/$$i" ; \
-	    $(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir) ; \
+	    $(INSTALL_DATA) $(srcdir)/$$i "$(DESTDIR)$(includedir)" ; \
 	done;
 
 #========================================================================
@@ -225,33 +239,37 @@ install-libraries: libraries
 #========================================================================
 
 install-doc: doc
-	@$(INSTALL_DATA_DIR) $(DESTDIR)$(mandir)/mann
+	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(mandir)/mann"
 	@echo "Installing documentation in $(DESTDIR)$(mandir)"
 	@list='$(srcdir)/doc/*.n'; for i in $$list; do \
 	    echo "Installing $$i"; \
-	    $(INSTALL_DATA) $$i $(DESTDIR)$(mandir)/mann ; \
+	    $(INSTALL_DATA) $$i "$(DESTDIR)$(mandir)/mann" ; \
 	done
 
 test: binaries libraries
 	$(TCLSH) `echo $(srcdir)/tests/all.tcl` $(TESTFLAGS) \
-		-load "package ifneeded ${PACKAGE_NAME} ${PACKAGE_VERSION} \
-			[list load `echo $(PKG_LIB_FILE)` $(PACKAGE_NAME)]"
+	    -load "package ifneeded $(PACKAGE_NAME) $(PACKAGE_VERSION) \
+		[list load `echo $(PKG_LIB_FILE)` [string totitle $(PACKAGE_NAME)]]"
 
 shell: binaries libraries
 	@$(TCLSH) $(SCRIPT)
 
 gdb:
-	$(TCLSH_ENV) gdb $(TCLSH_PROG) $(SCRIPT)
+	$(TCLSH_ENV) $(PKG_ENV) $(GDB) $(TCLSH_PROG) $(SCRIPT)
 
-VALGRINDARGS =	--tool=memcheck --num-callers=8 --leak-resolution=high \
-		--leak-check=yes --show-reachable=yes -v
+gdb-test: binaries libraries
+	$(TCLSH_ENV) $(PKG_ENV) $(GDB) \
+	    --args $(TCLSH_PROG) `echo $(srcdir)/tests/all.tcl` \
+	    $(TESTFLAGS) -singleproc 1 \
+	    -load "package ifneeded $(PACKAGE_NAME) $(PACKAGE_VERSION) \
+		[list load `echo $(PKG_LIB_FILE)` [string totitle $(PACKAGE_NAME)]]"
 
 valgrind: binaries libraries
-	$(TCLSH_ENV) valgrind $(VALGRINDARGS) $(TCLSH_PROG) \
-		`echo $(srcdir)/tests/all.tcl` $(TESTFLAGS)
+	$(TCLSH_ENV) $(PKG_ENV) $(VALGRIND) $(VALGRINDARGS) $(TCLSH_PROG) \
+	    `echo $(srcdir)/tests/all.tcl` $(TESTFLAGS)
 
 valgrindshell: binaries libraries
-	$(TCLSH_ENV) valgrind $(VALGRINDARGS) $(TCLSH_PROG) $(SCRIPT)
+	$(TCLSH_ENV) $(PKG_ENV) $(VALGRIND) $(VALGRINDARGS) $(TCLSH_PROG) $(SCRIPT)
 
 depend:
 
@@ -305,34 +323,41 @@ COMPRESS	= tar zcvf $(PKG_DIR).tar.gz $(PKG_DIR)
 DIST_ROOT	= /tmp/dist
 DIST_DIR	= $(DIST_ROOT)/$(PKG_DIR)
 
+DIST_INSTALL_DATA	= CPPROG='cp -p' $(INSTALL) -m 644
+DIST_INSTALL_SCRIPT	= CPPROG='cp -p' $(INSTALL) -m 755
+
 dist-clean:
 	rm -rf $(DIST_DIR) $(DIST_ROOT)/$(PKG_DIR).tar.*
 
-dist: dist-clean
+dist: dist-clean $(srcdir)/manifest.uuid
 	$(INSTALL_DATA_DIR) $(DIST_DIR)
-	cp -p $(srcdir)/ChangeLog $(srcdir)/README* $(srcdir)/license* \
-		$(srcdir)/aclocal.m4 $(srcdir)/configure $(srcdir)/*.in \
-		$(srcdir)/configure.ac $(DIST_DIR)/
-	chmod 664 $(DIST_DIR)/Makefile.in $(DIST_DIR)/aclocal.m4
-	chmod 775 $(DIST_DIR)/configure $(DIST_DIR)/configure.ac
 
-	for i in $(srcdir)/*.[ch]; do \
-	    if [ -f $$i ]; then \
-		cp -p $$i $(DIST_DIR)/ ; \
-	    fi; \
-	done;
+	# TEA files
+	$(DIST_INSTALL_DATA) $(srcdir)/Makefile.in \
+	    $(srcdir)/aclocal.m4 $(srcdir)/configure.ac \
+	    $(DIST_DIR)/
+	$(DIST_INSTALL_SCRIPT) $(srcdir)/configure $(DIST_DIR)/
 
 	$(INSTALL_DATA_DIR) $(DIST_DIR)/tclconfig
-	cp $(srcdir)/tclconfig/install-sh $(srcdir)/tclconfig/tcl.m4 \
-		$(DIST_DIR)/tclconfig/
-	chmod 664 $(DIST_DIR)/tclconfig/tcl.m4
-	chmod +x $(DIST_DIR)/tclconfig/install-sh
+	$(DIST_INSTALL_DATA) $(srcdir)/tclconfig/README.txt \
+	    $(srcdir)/manifest.uuid \
+	    $(srcdir)/tclconfig/tcl.m4 $(srcdir)/tclconfig/install-sh \
+	    $(DIST_DIR)/tclconfig/
 
-	list='demos doc generic library mac tests unix win'; \
+	# Extension files
+	$(DIST_INSTALL_DATA) \
+	    $(srcdir)/ChangeLog \
+	    $(srcdir)/README.sha \
+	    $(srcdir)/license.terms \
+	    $(srcdir)/README \
+	    $(srcdir)/pkgIndex.tcl.in \
+	    $(DIST_DIR)/
+
+	list='demos doc generic library macosx tests unix win'; \
 	for p in $$list; do \
 	    if test -d $(srcdir)/$$p ; then \
 		$(INSTALL_DATA_DIR) $(DIST_DIR)/$$p; \
-		cp -p $(srcdir)/$$p/*.* $(DIST_DIR)/$$p/; \
+		$(DIST_INSTALL_DATA) $(srcdir)/$$p/* $(DIST_DIR)/$$p/; \
 	    fi; \
 	done
 
@@ -369,25 +394,17 @@ distclean: clean
 #========================================================================
 
 install-lib-binaries: binaries
-	@$(INSTALL_DATA_DIR) $(DESTDIR)$(pkglibdir)
+	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(pkglibdir)"
 	@list='$(lib_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    echo " $(INSTALL_LIBRARY) $$p $(DESTDIR)$(pkglibdir)/$$p"; \
-	    $(INSTALL_LIBRARY) $$p $(DESTDIR)$(pkglibdir)/$$p; \
-	    stub=`echo $$p|sed -e "s/.*\(stub\).*/\1/"`; \
-	    if test "x$$stub" = "xstub"; then \
-		echo " $(RANLIB_STUB) $(DESTDIR)$(pkglibdir)/$$p"; \
-		$(RANLIB_STUB) $(DESTDIR)$(pkglibdir)/$$p; \
-	    else \
-		echo " $(RANLIB) $(DESTDIR)$(pkglibdir)/$$p"; \
-		$(RANLIB) $(DESTDIR)$(pkglibdir)/$$p; \
-	    fi; \
+	    $(INSTALL_LIBRARY) $$p "$(DESTDIR)$(pkglibdir)/$$p"; \
 	    ext=`echo $$p|sed -e "s/.*\.//"`; \
 	    if test "x$$ext" = "xdll"; then \
 		lib=`basename $$p|sed -e 's/.[^.]*$$//'`.lib; \
 		if test -f $$lib; then \
 		    echo " $(INSTALL_DATA) $$lib $(DESTDIR)$(pkglibdir)/$$lib"; \
-	            $(INSTALL_DATA) $$lib $(DESTDIR)$(pkglibdir)/$$lib; \
+	            $(INSTALL_DATA) $$lib "$(DESTDIR)$(pkglibdir)/$$lib"; \
 		fi; \
 	    fi; \
 	  fi; \
@@ -396,12 +413,12 @@ install-lib-binaries: binaries
 	  if test -f $(srcdir)/$$p; then \
 	    destp=`basename $$p`; \
 	    echo " Install $$destp $(DESTDIR)$(pkglibdir)/$$destp"; \
-	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(pkglibdir)/$$destp; \
+	    $(INSTALL_DATA) $(srcdir)/$$p "$(DESTDIR)$(pkglibdir)/$$destp"; \
 	  fi; \
 	done
 	@if test "x$(SHARED_BUILD)" = "x1"; then \
 	    echo " Install pkgIndex.tcl $(DESTDIR)$(pkglibdir)"; \
-	    $(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir); \
+	    $(INSTALL_DATA) pkgIndex.tcl "$(DESTDIR)$(pkglibdir)"; \
 	fi
 
 #========================================================================
@@ -414,11 +431,11 @@ install-lib-binaries: binaries
 #========================================================================
 
 install-bin-binaries: binaries
-	@$(INSTALL_DATA_DIR) $(DESTDIR)$(bindir)
+	@$(INSTALL_DATA_DIR) "$(DESTDIR)$(bindir)"
 	@list='$(bin_BINARIES)'; for p in $$list; do \
 	  if test -f $$p; then \
 	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p"; \
-	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
+	    $(INSTALL_PROGRAM) $$p "$(DESTDIR)$(bindir)/$$p"; \
 	  fi; \
 	done
 
@@ -428,17 +445,18 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 
 uninstall-binaries:
 	list='$(lib_BINARIES)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(pkglibdir)/$$p; \
+	  rm -f "$(DESTDIR)$(pkglibdir)/$$p"; \
 	done
 	list='$(PKG_TCL_SOURCES)'; for p in $$list; do \
 	  p=`basename $$p`; \
-	  rm -f $(DESTDIR)$(pkglibdir)/$$p; \
+	  rm -f "$(DESTDIR)$(pkglibdir)/$$p"; \
 	done
 	list='$(bin_BINARIES)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(bindir)/$$p; \
+	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
 	done
 
 .PHONY: all binaries clean depend distclean doc install libraries test
+.PHONY: gdb gdb-test valgrind valgrindshell
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

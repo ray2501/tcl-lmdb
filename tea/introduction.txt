@@ -1,7 +1,5 @@
 [comment {
 Remarks:
-- The sample extension uses the string interface
-- Is the sample extension in CVS up to date?
 - What makes tkimg special - its own stubs - why?
 }]
 

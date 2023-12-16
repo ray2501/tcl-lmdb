@@ -113,21 +113,16 @@ From the example extension (Sample):
 int
 Sample_Init(Tcl_Interp *interp)
 {
-    if (Tcl_InitStubs(interp, "8.0", 0) == NULL) {
+    if (Tcl_InitStubs(interp, "8.6-", 0) == NULL) {
         return TCL_ERROR;
     }
-    if (Tcl_PkgRequire(interp, "Tcl", TCL_VERSION, 0) == NULL) {
-        if (TCL_VERSION[0] == '7') {
-            if (Tcl_PkgRequire(interp, "Tcl", "8.0", 0) == NULL) {
-                return TCL_ERROR;
-            }
-        }
+    if (Tcl_PkgRequire(interp, "Tcl", "8.6-", 0) == NULL) {
+        return TCL_ERROR;
     }
     if (Tcl_PkgProvide(interp, "sample", VERSION) != TCL_OK) {
         return TCL_ERROR;
     }
-    Tcl_CreateCommand(interp, "sha1", Sha1,
-            (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL);
+    Tcl_CreateObjCommand(interp, "sha1", Sha1, NULL, NULL);
 
     ...
 }
@@ -190,17 +185,17 @@ combination of the minor version and the patchlevel. From the file
    PACKAGE=sample
 
    MAJOR_VERSION=0
-   MINOR_VERSION=5
+   MINOR_VERSION=6
    PATCHLEVEL=
 
    VERSION=${MAJOR_VERSION}.${MINOR_VERSION}${PATCHLEVEL}
    NODOT_VERSION=${MAJOR_VERSION}${MINOR_VERSION}
 }]
 
-So, the above would result in a macro VERSION with the value 0.5
+So, the above would result in a macro VERSION with the value 0.6
 [para]
 The version number is also used to construct a distinguishing name for
-the library, like: libsample0.5.so or sample05.dll.
+the library, like: libsample0.6.so or sample06.dll.
 This way there is much less chance of a conflict between versions.
 
 
@@ -236,13 +231,11 @@ page for the load command, but here are a few examples:
 [example {
    Filename        Package name    Initial procedure
    foo.dll         foo             Foo_Init
-   FOO.DLL         fOO             Foo_Init
-   libFOO.so       fOO             Foo_Init
    libfoo1.2.so    fOo             Foo_Init
 }]
 So, in the index file you might see:
 [example {
-   package ifneeded fOo 1.2 [list load [file join $dir libfoo1.2.so]]
+   package ifneeded foo 1.2 [list load [file join $dir libfoo1.2.so]]
 }]
 A second issue is that for the extension to useful in a [emph safe]
 interpreter, you need to define an initialisation routine with a name
@@ -277,5 +270,5 @@ reduce the chance of naming conflicts):
     * Only the _Init function is exported.
     */
 
-   EXTERN int      Sample_Init _ANSI_ARGS_((Tcl_Interp * interp));
+   EXTERN int      Sample_Init (Tcl_Interp * interp);
 }]

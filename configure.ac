@@ -27,7 +27,7 @@ AC_INIT([lmdb], [0.4.2])
 # as well as PKG_LIB_FILE and PKG_STUB_LIB_FILE.
 #--------------------------------------------------------------------
 
-TEA_INIT([3.10])
+TEA_INIT()
 
 AC_CONFIG_AUX_DIR(tclconfig)
 
@@ -113,8 +113,6 @@ fi
 if test "${TEA_PLATFORM}" = "windows" ; then
     # Ensure no empty if clauses
     :
-    TEA_ADD_CFLAGS([-D_WIN32_WINNT=0x0501])
-    TEA_ADD_LIBS([-lntdll])
     #TEA_ADD_SOURCES([win/winFile.c])
     #TEA_ADD_INCLUDES([-I\"$(${CYGPATH} ${srcdir}/win)\"])
 else
@@ -188,9 +186,24 @@ TEA_PROG_TCLSH
 #TEA_PROG_WISH
 
 #--------------------------------------------------------------------
-# Finally, substitute all of the various values into the Makefile.
-# You may alternatively have a special pkgIndex.tcl.in or other files
-# which require substituting th AC variables in.  Include these here.
+# Setup a *Config.sh.in configuration file.
 #--------------------------------------------------------------------
 
-AC_OUTPUT([Makefile pkgIndex.tcl])
+#TEA_EXPORT_CONFIG([sample])
+#AC_SUBST(SAMPLE_VAR)
+
+#--------------------------------------------------------------------
+# Specify files to substitute AC variables in. You may alternatively
+# have a special pkgIndex.tcl.in or other files which require
+# substituting the AC variables in. Include these here.
+#--------------------------------------------------------------------
+
+AC_CONFIG_FILES([Makefile pkgIndex.tcl])
+#AC_CONFIG_FILES([sampleConfig.sh])
+
+#--------------------------------------------------------------------
+# Finally, substitute all of the various values into the files
+# specified with AC_CONFIG_FILES.
+#--------------------------------------------------------------------
+
+AC_OUTPUT
