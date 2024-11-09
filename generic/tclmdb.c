@@ -140,7 +140,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       char *zArg;
       char *key;
       char *data;
-      int len;
+      Tcl_Size len;
       MDB_val mkey;
       MDB_val mdata;
       MDB_cursor_op op;
@@ -279,7 +279,7 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       char *zArg;
       unsigned char *key;
       unsigned char *data;
-      int len;
+      Tcl_Size len;
       MDB_val mkey;
       MDB_val mdata;
       MDB_cursor_op op;
@@ -414,8 +414,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       char *zArg;
       char *key;
       char *data;
-      int key_len;
-      int data_len;
+      Tcl_Size key_len;
+      Tcl_Size data_len;
       MDB_val mkey;
       MDB_val mdata;
       int flags = 0;
@@ -514,8 +514,8 @@ static int LMDB_CUR(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
       char *zArg;
       unsigned char *key;
       unsigned char *data;
-      int key_len;
-      int data_len;
+      Tcl_Size key_len;
+      Tcl_Size data_len;
       MDB_val mkey;
       MDB_val mdata;
       int flags = 0;
@@ -824,8 +824,8 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBI_PUT: {
       char *key;
       char *data;
-      int key_len;
-      int data_len;
+      Tcl_Size key_len;
+      Tcl_Size data_len;
       MDB_val mkey;
       MDB_val mdata;
       const char *zArg;
@@ -940,8 +940,8 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBI_PUT_BINARY: {
       unsigned char *key;
       unsigned char *data;
-      int key_len;
-      int data_len;
+      Tcl_Size key_len;
+      Tcl_Size data_len;
       MDB_val mkey;
       MDB_val mdata;
       const char *zArg;
@@ -1051,7 +1051,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
 
     case DBI_GET: {
       char *key;
-      int len;
+      Tcl_Size len;
       MDB_val mkey;
       MDB_val mdata;
       const char *zArg;
@@ -1128,7 +1128,7 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
      */
     case DBI_GET_BINARY: {
       unsigned char *key;
-      int len;
+      Tcl_Size len;
       MDB_val mkey;
       MDB_val mdata;
       const char *zArg;
@@ -1202,8 +1202,8 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBI_DEL: {
       char *key;
       char *data;
-      int key_len;
-      int data_len;
+      Tcl_Size key_len;
+      Tcl_Size data_len;
       MDB_val mkey;
       MDB_val mdata;
       int isEmptyData = 0;
@@ -1309,8 +1309,8 @@ static int LMDB_DBI(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBI_DEL_BINARY: {
       unsigned char *key;
       unsigned char *data;
-      int key_len;
-      int data_len;
+      Tcl_Size key_len;
+      Tcl_Size data_len;
       MDB_val mkey;
       MDB_val mdata;
       int isEmptyData = 0;
@@ -2154,7 +2154,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBENV_COPY: {
       char *path;
       char *zArg;
-      int len;
+      Tcl_Size len;
       #if MDB_VERSION_MAJOR > 0 || \
         (MDB_VERSION_MAJOR == 0 && (MDB_VERSION_MINOR > 9 || \
                     (MDB_VERSION_MINOR == 9 && \
@@ -2300,7 +2300,7 @@ static int LMDB_ENV(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv){
     case DBENV_TXN: {
       char *zArg;
       char *parentTxn = NULL;
-      int len = 0;
+      Tcl_Size len = 0;
       MDB_txn *parent = NULL;
       int flags = 0;
       MDB_txn *txn;
@@ -2470,7 +2470,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
       MDB_txn *txn;
       MDB_dbi dbi;
       const char *database = NULL;
-      int len;
+      Tcl_Size len;
       int flags = 0;
       Tcl_HashEntry *newHashEntryPtr;
       char handleName[16 + TCL_INTEGER_SPACE];
@@ -2693,11 +2693,7 @@ static int LMDB_MAIN(void *cd, Tcl_Interp *interp, int objc,Tcl_Obj *const*objv)
 
 EXTERN int Lmdb_Init(Tcl_Interp *interp)
 {
-    /*
-     * This may work with 8.0, but we are using strictly stubs here,
-     * which requires 8.1.
-     */
-    if (Tcl_InitStubs(interp, "8.1", 0) == NULL) {
+    if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL) {
 	return TCL_ERROR;
     }
     if (Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION) != TCL_OK) {

@@ -1,5 +1,6 @@
 2024-11-09  Danilo Chang  <ray2501@gmail.com>
 
+    * generic/tclmdb.c: Use Tcl_Size to replace int (for Tcl 9)
     * generic/mdb.c: Update LMDB source code.
 
 2024-05-08  Danilo Chang  <ray2501@gmail.com>
