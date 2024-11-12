@@ -433,7 +433,7 @@ Examples
     set filename "lmdb-mdb.master.zip"
     set size [file size "/home/danilo/Downloads/lmdb-mdb.master.zip"] 
     set fd [open "/home/danilo/Downloads/lmdb-mdb.master.zip" {RDWR BINARY}]
-    fconfigure $fd -blocking 1 -encoding binary -translation binary 
+    fconfigure $fd -blocking 1 -encoding iso8859-1 -translation binary 
     set data [read $fd $size]
     close $fd  
 
@@ -457,7 +457,7 @@ Examples
     set mytxn2 [$myenv txn -readonly 1]
     set fetch_data [$mydbi get $filename -txn $mytxn2]
     set fd [open "/home/danilo/Downloads/lmdb-mdb.master_test.zip" {CREAT RDWR BINARY}]  
-    fconfigure $fd -blocking 1 -encoding binary -translation binary 
+    fconfigure $fd -blocking 1 -encoding iso8859-1 -translation binary 
     puts -nonewline $fd $fetch_data  
     close $fd
     $mytxn2 abort
