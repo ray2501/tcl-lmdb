@@ -117,7 +117,12 @@ test lmdb-1.12 {Open a environment, expected integer} {*}{
 
 test lmdb-1.13 {Open a environment} {*}{
     -body {
-    env0 open -path $testdir -mode 0664
+    if {[package vcompare [info patchlevel] "9.0"] < 0} {
+        set mode 0664
+    } else {
+        set mode 0o664
+    }
+    env0 open -path $testdir -mode $mode
     }
     -result {0}
 }
