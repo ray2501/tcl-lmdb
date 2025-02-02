@@ -4,7 +4,7 @@
 
 Name:          tcl-lmdb
 Summary:       Tcl interface for LMDB
-Version:       0.4.3
+Version:       0.5.0
 Release:       2
 License:       BSD-2-Clause
 Group:         Development/Libraries/Tcl

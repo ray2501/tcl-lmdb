@@ -1,3 +1,7 @@
+2025-02-02  Danilo Chang  <ray2501@gmail.com>
+
+    * Setup version to v0.5.0
+
 2024-11-09  Danilo Chang  <ray2501@gmail.com>
 
     * generic/tclmdb.c: Use Tcl_Size to replace int (for Tcl 9)
