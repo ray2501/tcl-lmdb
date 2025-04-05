@@ -176,7 +176,11 @@ typedef SSIZE_T	ssize_t;
 # if !(defined(MDB_USE_POSIX_MUTEX) || defined(MDB_USE_POSIX_SEM))
 # define MDB_USE_SYSV_SEM	1
 # endif
+# if defined(__APPLE__)
+# define MDB_FDATASYNC(fd)		fcntl(fd, F_FULLFSYNC)
+# else
 # define MDB_FDATASYNC		fsync
+# endif
 #elif defined(__ANDROID__)
 # define MDB_FDATASYNC		fsync
 #endif
@@ -2892,7 +2896,7 @@ mdb_env_sync0(MDB_env *env, int force, pgno_t numpgs)
 				? MS_ASYNC : MS_SYNC;
 			if (MDB_MSYNC(env->me_map, env->me_psize * numpgs, flags))
 				rc = ErrCode();
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
 			else if (flags == MS_SYNC && MDB_FDATASYNC(env->me_fd))
 				rc = ErrCode();
 #endif
@@ -5087,6 +5091,9 @@ mdb_env_open2(MDB_env *env, int prev)
 	env->me_maxkey = env->me_nodemax - (NODESIZE + sizeof(MDB_db));
 #endif
 	env->me_maxpg = env->me_mapsize / env->me_psize;
+
+	if (prev && env->me_txns)
+		env->me_txns->mti_txnid = meta.mm_txnid;
 
 #if MDB_DEBUG
 	{
