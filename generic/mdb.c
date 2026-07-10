@@ -7316,7 +7316,7 @@ static void mdb_rpage_dispose(MDB_env *env, MDB_ID3 *id3)
 static void mdb_page_set_checksum(MDB_env *env, MDB_page *mp, size_t size)
 {
 	MDB_val src, dst, *key;
-	src.mv_size = size - env->me_sumsize;
+	src.mv_size = size - env->me_sumsize - env->me_esumsize;
 	src.mv_data = mp;
 	dst.mv_size = env->me_sumsize;
 	dst.mv_data = (char *)src.mv_data + src.mv_size;
@@ -7331,7 +7331,7 @@ static int mdb_page_chk_checksum(MDB_env *env, MDB_page *mp, size_t size)
 {
 	MDB_val src, dst, chk, *key;
 	char sumbuf[256];
-	src.mv_size = size - env->me_sumsize;
+	src.mv_size = size - env->me_sumsize - env->me_esumsize;
 	src.mv_data = mp;
 	chk.mv_size = env->me_sumsize;
 	chk.mv_data = (char *)src.mv_data + src.mv_size;
@@ -8589,11 +8589,12 @@ _mdb_cursor_put(MDB_cursor *mc, MDB_val *key, MDB_val *data,
 	if (key->mv_size-1 >= ENV_MAXKEY(env))
 		return MDB_BAD_VALSIZE;
 
+	if (mc->mc_db->md_flags & MDB_DUPSORT) {
+		if (!data->mv_size || data->mv_size > ENV_MAXKEY(env))
+			return MDB_BAD_VALSIZE;
+	}
 #if SIZE_MAX > MAXDATASIZE
-	if (data->mv_size-1 >= ((mc->mc_db->md_flags & MDB_DUPSORT) ? ENV_MAXKEY(env) : MAXDATASIZE))
-		return MDB_BAD_VALSIZE;
-#else
-	if ((mc->mc_db->md_flags & MDB_DUPSORT) && data->mv_size-1 >= ENV_MAXKEY(env))
+	if (data->mv_size > MAXDATASIZE)
 		return MDB_BAD_VALSIZE;
 #endif
 
